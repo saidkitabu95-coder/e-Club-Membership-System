@@ -76,20 +76,17 @@
             <div class="form-error" id="confirmPasswordError"></div>
           </div>
 
-          <div class="form-group">
-            <label for="department">Department:</label>
-            <input type="text" id="department" name="department">
-          </div>
 
           <div class="form-group">
             <label for="year">Year of Study:</label>
-            <select id="year" name="year">
+            <select id="year" name="year" required>
               <option value="">Select Year</option>
               <option value="1st Year">1st Year</option>
               <option value="2nd Year">2nd Year</option>
               <option value="3rd Year">3rd Year</option>
               <option value="4th Year">4th Year</option>
             </select>
+            <div class="form-error" id="yearError"></div>
           </div>
 
           <div class="form-group">
@@ -172,19 +169,22 @@
       e.preventDefault();
 
       // Clear all errors
-      ['fullName', 'regNumber', 'email', 'password', 'confirmPassword', 'agreeTerms'].forEach(field => clearError(field));
+      ['fullName', 'email', 'password', 'confirmPassword', 'year', 'agreeTerms'].forEach(field => clearError(field));
 
       const formData = {
         fullName: document.getElementById('fullName').value.trim(),
-        regNumber: document.getElementById('regNumber').value.trim(),
         email: document.getElementById('email').value.trim(),
         password: document.getElementById('password').value,
         confirmPassword: document.getElementById('confirmPassword').value,
-        department: document.getElementById('department').value.trim(),
         year: document.getElementById('year').value
       };
 
       const agreeTerms = document.getElementById('agreeTerms').checked;
+
+      if (!formData.year) {
+        showError('year', 'Please select your year of study');
+        return;
+      }
 
       if (!agreeTerms) {
         showError('agreeTerms', 'You must agree to the Terms of Service');

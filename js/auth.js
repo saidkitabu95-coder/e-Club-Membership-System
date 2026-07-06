@@ -9,9 +9,6 @@ const AuthManager = {
     if (!formData.fullName || formData.fullName.trim().length < 2) {
       return { success: false, message: 'Full name is required and must be at least 2 characters' };
     }
-    if (!formData.regNumber || formData.regNumber.trim().length < 3) {
-      return { success: false, message: 'Registration number is required' };
-    }
     if (!this.isValidEmail(formData.email)) {
       return { success: false, message: 'Invalid email address' };
     }
@@ -20,6 +17,9 @@ const AuthManager = {
     }
     if (formData.password !== formData.confirmPassword) {
       return { success: false, message: 'Passwords do not match' };
+    }
+    if (!formData.year) {
+      return { success: false, message: 'Year of study is required' };
     }
 
     // Check if email already exists

@@ -172,7 +172,11 @@
 
       // Update welcome message
       document.getElementById('welcomeMessage').textContent = `Welcome back, ${user.fullName}!`;
-      document.getElementById('userInfo').textContent = `Registration Number: ${user.regNumber} | Email: ${user.email}`;
+      const userInfo = document.getElementById('userInfo');
+      if (userInfo) {
+        userInfo.textContent = '';
+        userInfo.style.display = 'none';
+      }
 
       // Load statistics
       loadStatistics(user.id);
