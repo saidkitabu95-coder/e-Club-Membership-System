@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - E-Club Membership System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-brand">
+        🎓 E-Club Admin
+      </div>
+      <button class="menu-toggle">☰</button>
+      <div class="navbar-menu">
+        <span style="color: var(--text-secondary);">Admin Panel</span>
+      </div>
+      <div class="navbar-actions">
+        <div class="flex-gap-md">
+          <a href="index.html" class="btn btn-outline btn-small">Exit Admin</a>
+        </div>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Admin Layout -->
+  <div class="admin-container">
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <nav class="admin-nav">
+        <div class="admin-nav-item active" onclick="showContent('dashboard')">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </div>
+        <div class="admin-nav-item" onclick="showContent('clubs')">
+          <span class="nav-icon">🏛️</span>
+          <span>Manage Clubs</span>
+        </div>
+        <div class="admin-nav-item" onclick="showContent('students')">
+          <span class="nav-icon">👥</span>
+          <span>Manage Students</span>
+        </div>
+        <div class="admin-nav-item" onclick="showContent('applications')">
+          <span class="nav-icon">📝</span>
+          <span>Applications</span>
+        </div>
+        <div class="admin-nav-item" onclick="showContent('events')">
+          <span class="nav-icon">📅</span>
+          <span>Manage Events</span>
+        </div>
+        <div class="admin-nav-item" onclick="showContent('announcements')">
+          <span class="nav-icon">📢</span>
+          <span>Announcements</span>
+        </div>
+        <div class="admin-nav-item" onclick="showContent('reports')">
+          <span class="nav-icon">📈</span>
+          <span>Reports</span>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Dashboard Content -->
+      <div id="dashboard" class="admin-content active">
+        <div class="admin-header">
+          <h1>Admin Dashboard</h1>
+          <p>System Overview and Quick Stats</p>
+        </div>
+
+        <div class="admin-stats">
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">🏛️</div>
+            <div class="admin-stat-value" id="statTotalClubs">4</div>
+            <div class="admin-stat-label">Total Clubs</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">👥</div>
+            <div class="admin-stat-value" id="statTotalStudents">0</div>
+            <div class="admin-stat-label">Registered Students</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">📝</div>
+            <div class="admin-stat-value" id="statPendingApps">0</div>
+            <div class="admin-stat-label">Pending Applications</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">📅</div>
+            <div class="admin-stat-value" id="statUpcomingEvents">0</div>
+            <div class="admin-stat-label">Upcoming Events</div>
+          </div>
+        </div>
+
+        <div class="reports-grid">
+          <div class="report-card">
+            <div class="report-title">📊 Application Status</div>
+            <div class="report-stat">
+              <span class="report-label">Pending</span>
+              <span class="report-value" id="reportPending">0</span>
+            </div>
+            <div class="report-stat">
+              <span class="report-label">Approved</span>
+              <span class="report-value" id="reportApproved">0</span>
+            </div>
+            <div class="report-stat">
+              <span class="report-label">Rejected</span>
+              <span class="report-value" id="reportRejected">0</span>
+            </div>
+          </div>
+
+          <div class="report-card">
+            <div class="report-title">🏛️ Club Membership</div>
+            <div id="clubMembershipReport">
+              <!-- Will be populated dynamically -->
+            </div>
+          </div>
+
+          <div class="report-card">
+            <div class="report-title">📅 Events Overview</div>
+            <div class="report-stat">
+              <span class="report-label">Total Events</span>
+              <span class="report-value" id="reportTotalEvents">0</span>
+            </div>
+            <div class="report-stat">
+              <span class="report-label">Upcoming</span>
+              <span class="report-value" id="reportUpcomingEvents">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clubs Content -->
+      <div id="clubs" class="admin-content">
+        <div class="content-header">
+          <h2 class="content-title">Manage Clubs</h2>
+          <div class="content-actions">
+            <button class="btn btn-primary btn-small">+ Add Club</button>
+          </div>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Club</th>
+              <th>Category</th>
+              <th>Members</th>
+              <th>Founded</th>
+              <th>President</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="clubsTableBody">
+            <!-- Clubs will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Students Content -->
+      <div id="students" class="admin-content">
+        <div class="content-header">
+          <h2 class="content-title">Manage Students</h2>
+          <div class="content-actions">
+            <div class="search-box">
+              <input type="text" id="studentSearch" placeholder="Search students...">
+            </div>
+          </div>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Registration #</th>
+              <th>Email</th>
+              <th>Department</th>
+              <th>Year</th>
+              <th>Registered</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="studentsTableBody">
+            <!-- Students will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Applications Content -->
+      <div id="applications" class="admin-content">
+        <div class="content-header">
+          <h2 class="content-title">Review Applications</h2>
+          <div class="content-actions">
+            <div class="search-box">
+              <input type="text" id="appSearch" placeholder="Search applications...">
+            </div>
+          </div>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Club</th>
+              <th>Status</th>
+              <th>Applied Date</th>
+              <th>Motivation</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="applicationsTableBody">
+            <!-- Applications will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Events Content -->
+      <div id="events" class="admin-content">
+        <div class="content-header">
+          <h2 class="content-title">Manage Events</h2>
+          <div class="content-actions">
+            <button class="btn btn-primary btn-small">+ Add Event</button>
+          </div>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Club</th>
+              <th>Date</th>
+              <th>Venue</th>
+              <th>Speaker</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="eventsTableBody">
+            <!-- Events will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Announcements Content -->
+      <div id="announcements" class="admin-content">
+        <div class="content-header">
+          <h2 class="content-title">Manage Announcements</h2>
+          <div class="content-actions">
+            <button class="btn btn-primary btn-small">+ New Announcement</button>
+          </div>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Club</th>
+              <th>Priority</th>
+              <th>Date Posted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="announcementsTableBody">
+            <!-- Announcements will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Reports Content -->
+      <div id="reports" class="admin-content">
+        <div class="content-header">
+          <h2 class="content-title">Reports & Analytics</h2>
+        </div>
+
+        <div class="reports-grid">
+          <div class="report-card">
+            <div class="report-title">👥 Student Demographics</div>
+            <div class="report-stat">
+              <span class="report-label">Total Students</span>
+              <span class="report-value" id="demTotalStudents">0</span>
+            </div>
+            <div class="report-stat">
+              <span class="report-label">Active Members</span>
+              <span class="report-value" id="demActiveMembers">0</span>
+            </div>
+            <div class="report-stat">
+              <span class="report-label">Pending Applications</span>
+              <span class="report-value" id="demPendingApps">0</span>
+            </div>
+          </div>
+
+          <div class="report-card">
+            <div class="report-title">🏛️ Club Performance</div>
+            <div id="clubPerformanceReport">
+              <!-- Will be populated dynamically -->
+            </div>
+          </div>
+
+          <div class="report-card">
+            <div class="report-title">📝 Application Conversion</div>
+            <div class="report-stat">
+              <span class="report-label">Total Applications</span>
+              <span class="report-value" id="convTotal">0</span>
+            </div>
+            <div class="report-stat">
+              <span class="report-label">Approval Rate</span>
+              <span class="report-value" id="convRate">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div id="loadingSpinner">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Admin Panel</h3>
+          <p>E-Club Management System for administrators to oversee clubs, students, and applications.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <a href="index.html">Home</a>
+          <a href="#">Documentation</a>
+          <a href="#">Support</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 E-Club Membership System - Admin Panel.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/clubs.js"></script>
+  <script src="js/application.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Show content section
+    function showContent(sectionId) {
+      // Hide all content
+      document.querySelectorAll('.admin-content').forEach(content => {
+        content.classList.remove('active');
+      });
+
+      // Remove active from nav items
+      document.querySelectorAll('.admin-nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      // Show selected content
+      document.getElementById(sectionId).classList.add('active');
+
+      // Add active to nav item
+      event.target.closest('.admin-nav-item').classList.add('active');
+
+      // Load data for specific section
+      if (sectionId === 'dashboard') loadDashboardStats();
+      if (sectionId === 'clubs') loadClubsTable();
+      if (sectionId === 'students') loadStudentsTable();
+      if (sectionId === 'applications') loadApplicationsTable();
+      if (sectionId === 'events') loadEventsTable();
+      if (sectionId === 'announcements') loadAnnouncementsTable();
+      if (sectionId === 'reports') loadReports();
+    }
+
+    // Load dashboard statistics
+    function loadDashboardStats() {
+      const clubs = StorageManager.getClubs();
+      const students = StorageManager.getStudents();
+      const applications = StorageManager.getApplications();
+      const events = StorageManager.getUpcomingEvents();
+
+      const pendingApps = applications.filter(a => a.status === 'pending').length;
+      const approvedApps = applications.filter(a => a.status === 'approved').length;
+      const rejectedApps = applications.filter(a => a.status === 'rejected').length;
+
+      document.getElementById('statTotalClubs').textContent = clubs.length;
+      document.getElementById('statTotalStudents').textContent = students.length;
+      document.getElementById('statPendingApps').textContent = pendingApps;
+      document.getElementById('statUpcomingEvents').textContent = events.length;
+
+      document.getElementById('reportPending').textContent = pendingApps;
+      document.getElementById('reportApproved').textContent = approvedApps;
+      document.getElementById('reportRejected').textContent = rejectedApps;
+      document.getElementById('reportTotalEvents').textContent = StorageManager.getEvents().length;
+      document.getElementById('reportUpcomingEvents').textContent = events.length;
+
+      // Club membership report
+      let clubReport = '';
+      clubs.forEach(club => {
+        clubReport += `
+          <div class="report-stat">
+            <span class="report-label">${club.name}</span>
+            <span class="report-value">${club.memberCount}</span>
+          </div>
+        `;
+      });
+      document.getElementById('clubMembershipReport').innerHTML = clubReport;
+    }
+
+    // Load clubs table
+    function loadClubsTable() {
+      const clubs = StorageManager.getClubs();
+      const tbody = document.getElementById('clubsTableBody');
+
+      const html = clubs.map(club => `
+        <tr>
+          <td>${club.logo} ${club.name}</td>
+          <td>${club.category}</td>
+          <td>${club.memberCount}</td>
+          <td>${club.founded}</td>
+          <td>${club.president}</td>
+          <td>
+            <div class="table-actions">
+              <button class="action-icon-btn" title="Edit">✏️</button>
+              <button class="action-icon-btn danger" title="Delete">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      tbody.innerHTML = html;
+    }
+
+    // Load students table
+    function loadStudentsTable() {
+      const students = StorageManager.getStudents();
+      const tbody = document.getElementById('studentsTableBody');
+
+      const html = students.map(student => `
+        <tr>
+          <td>${student.fullName}</td>
+          <td>${student.regNumber}</td>
+          <td>${student.email}</td>
+          <td>${student.department || 'N/A'}</td>
+          <td>${student.year || 'N/A'}</td>
+          <td>${App.formatDate(student.registeredAt)}</td>
+          <td>
+            <div class="table-actions">
+              <button class="action-icon-btn" title="View">👁️</button>
+              <button class="action-icon-btn danger" title="Delete">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      tbody.innerHTML = html || '<tr><td colspan="7" style="text-align: center; padding: var(--spacing-lg);">No students registered yet</td></tr>';
+    }
+
+    // Load applications table
+    function loadApplicationsTable() {
+      const applications = ApplicationManager.getAllApplications();
+      const tbody = document.getElementById('applicationsTableBody');
+
+      const html = applications.map(app => `
+        <tr>
+          <td>${app.studentName}</td>
+          <td>${app.clubName}</td>
+          <td><span class="status-pill ${app.status}">${app.status}</span></td>
+          <td>${App.formatDate(app.appliedAt)}</td>
+          <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${app.motivation}</td>
+          <td>
+            <div class="table-actions">
+              ${app.status === 'pending' ? `
+                <button class="action-icon-btn" title="Approve" onclick="approveApp(${app.id})">✅</button>
+                <button class="action-icon-btn danger" title="Reject" onclick="rejectApp(${app.id})">❌</button>
+              ` : ''}
+              <button class="action-icon-btn" title="View">👁️</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      tbody.innerHTML = html || '<tr><td colspan="6" style="text-align: center; padding: var(--spacing-lg);">No applications</td></tr>';
+    }
+
+    // Load events table
+    function loadEventsTable() {
+      const events = StorageManager.getEvents();
+      const tbody = document.getElementById('eventsTableBody');
+
+      const html = events.map(event => `
+        <tr>
+          <td>${event.title}</td>
+          <td>${StorageManager.getClubById(event.clubId).name}</td>
+          <td>${App.formatDate(event.date)}</td>
+          <td>${event.venue}</td>
+          <td>${event.speaker}</td>
+          <td>
+            <div class="table-actions">
+              <button class="action-icon-btn" title="Edit">✏️</button>
+              <button class="action-icon-btn danger" title="Delete">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      tbody.innerHTML = html;
+    }
+
+    // Load announcements table
+    function loadAnnouncementsTable() {
+      const announcements = StorageManager.getAnnouncements();
+      const tbody = document.getElementById('announcementsTableBody');
+
+      const html = announcements.map(ann => `
+        <tr>
+          <td>${ann.title}</td>
+          <td>${StorageManager.getClubById(ann.clubId).name}</td>
+          <td><span class="badge badge-${ann.priority === 'high' ? 'danger' : 'info'}">${ann.priority}</span></td>
+          <td>${App.formatDate(ann.date)}</td>
+          <td>
+            <div class="table-actions">
+              <button class="action-icon-btn" title="Edit">✏️</button>
+              <button class="action-icon-btn danger" title="Delete">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      tbody.innerHTML = html;
+    }
+
+    // Load reports
+    function loadReports() {
+      const students = StorageManager.getStudents();
+      const applications = StorageManager.getApplications();
+      const clubs = StorageManager.getClubs();
+      
+      const totalApps = applications.length;
+      const approvedApps = applications.filter(a => a.status === 'approved').length;
+      const approvalRate = totalApps > 0 ? Math.round((approvedApps / totalApps) * 100) : 0;
+
+      document.getElementById('demTotalStudents').textContent = students.length;
+      document.getElementById('demActiveMembers').textContent = approvedApps;
+      document.getElementById('demPendingApps').textContent = applications.filter(a => a.status === 'pending').length;
+      document.getElementById('convTotal').textContent = totalApps;
+      document.getElementById('convRate').textContent = approvalRate + '%';
+
+      let clubReport = '';
+      clubs.forEach(club => {
+        const clubApps = applications.filter(a => a.clubId == club.id);
+        clubReport += `
+          <div class="report-stat">
+            <span class="report-label">${club.name}</span>
+            <span class="report-value">${clubApps.length}</span>
+          </div>
+        `;
+      });
+      document.getElementById('clubPerformanceReport').innerHTML = clubReport;
+    }
+
+    // Approve application
+    function approveApp(appId) {
+      ApplicationManager.approveApplication(appId);
+      App.showNotification('Application approved', 'success');
+      loadApplicationsTable();
+    }
+
+    // Reject application
+    function rejectApp(appId) {
+      ApplicationManager.rejectApplication(appId);
+      App.showNotification('Application rejected', 'success');
+      loadApplicationsTable();
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', loadDashboardStats);
+  </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Announcements - E-Club Membership System</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-brand">
+        🎓 E-Club
+      </div>
+      <button class="menu-toggle">☰</button>
+      <div class="navbar-menu">
+        <a href="index.html">Home</a>
+        <a href="clubs.html">Clubs</a>
+        <a href="events.html">Events</a>
+        <a href="announcements.html">Announcements</a>
+      </div>
+      <div class="navbar-actions">
+        <div id="authLinks" class="flex-gap-md">
+          <a href="login.html" class="btn btn-outline btn-small">Login</a>
+          <a href="register.html" class="btn btn-primary btn-small">Register</a>
+        </div>
+        <div id="loggedInLinks" class="flex-gap-md">
+          <a href="dashboard.html">Dashboard</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <a href="status.html">Status</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <button onclick="App.logout()" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-weight: 500;">Logout</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="hero" style="padding: 60px var(--spacing-md);">
+    <div class="hero-content">
+      <h1>Club Announcements</h1>
+      <p>Stay updated with the latest club news and information</p>
+    </div>
+  </section>
+
+  <!-- Announcements Section -->
+  <section class="section">
+    <div class="container" style="max-width: 800px;">
+      <!-- Filter by Club -->
+      <div style="margin-bottom: var(--spacing-lg);">
+        <label for="clubFilter" style="margin-bottom: var(--spacing-sm); display: block; font-weight: 600;">Filter by Club:</label>
+        <select id="clubFilter" style="padding: var(--spacing-md); width: 100%; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+          <option value="">All Clubs</option>
+        </select>
+      </div>
+
+      <!-- Announcements List -->
+      <div id="announcementsContainer">
+        <!-- Announcements will be loaded here -->
+      </div>
+
+      <!-- No Announcements -->
+      <div id="noAnnouncements" class="empty-state hidden">
+        <div class="empty-state-icon">📭</div>
+        <p>No announcements yet</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About</h3>
+          <p>E-Club Membership System helps students discover and join clubs that match their interests and passions.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <a href="clubs.html">Clubs</a>
+          <a href="events.html">Events</a>
+          <a href="announcements.html">Announcements</a>
+          <a href="register.html">Register</a>
+        </div>
+        <div class="footer-section">
+          <h3>Support</h3>
+          <a href="#">Contact Us</a>
+          <a href="#">FAQ</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <div class="footer-section">
+          <h3>Connect</h3>
+          <a href="#">Facebook</a>
+          <a href="#">Twitter</a>
+          <a href="#">Instagram</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 E-Club Membership System. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/clubs.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    let allAnnouncements = [];
+
+    // Load clubs filter
+    function loadClubsFilter() {
+      const select = document.getElementById('clubFilter');
+      const clubs = StorageManager.getClubs();
+
+      clubs.forEach(club => {
+        const option = document.createElement('option');
+        option.value = club.id;
+        option.textContent = club.name;
+        select.appendChild(option);
+      });
+
+      select.addEventListener('change', filterAnnouncements);
+    }
+
+    // Load announcements
+    function loadAnnouncements() {
+      allAnnouncements = StorageManager.getAnnouncements()
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      displayAnnouncements();
+    }
+
+    // Display announcements
+    function displayAnnouncements() {
+      const container = document.getElementById('announcementsContainer');
+      const noAnnouncements = document.getElementById('noAnnouncements');
+      const filter = document.getElementById('clubFilter').value;
+
+      let filtered = allAnnouncements;
+
+      if (filter) {
+        filtered = allAnnouncements.filter(ann => ann.clubId == filter);
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        noAnnouncements.classList.remove('hidden');
+        return;
+      }
+
+      noAnnouncements.classList.add('hidden');
+
+      const html = filtered.map(ann => {
+        const club = StorageManager.getClubById(ann.clubId);
+        const priorityClass = `badge badge-${ann.priority === 'high' ? 'danger' : 'info'}`;
+        const priorityText = ann.priority.charAt(0).toUpperCase() + ann.priority.slice(1);
+
+        return `
+          <div class="card mb-3">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: var(--spacing-md);">
+              <div style="flex: 1;">
+                <h3 style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-sm);">
+                  ${club ? club.logo : '🏢'} ${ann.title}
+                </h3>
+                <p class="text-secondary" style="margin-bottom: var(--spacing-sm);">
+                  <strong>${club ? club.name : 'Unknown Club'}</strong> • ${App.formatDate(ann.date)}
+                </p>
+              </div>
+              <span class="${priorityClass}">${priorityText}</span>
+            </div>
+
+            <p class="text-secondary" style="margin-bottom: var(--spacing-md);">
+              ${ann.content}
+            </p>
+
+            <div style="display: flex; gap: var(--spacing-md);">
+              ${club ? `<a href="club-details.html?id=${club.id}" class="btn btn-outline btn-small">View Club</a>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = html;
+    }
+
+    // Filter announcements
+    function filterAnnouncements() {
+      displayAnnouncements();
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadClubsFilter();
+      loadAnnouncements();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Club Membership System - Home</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-brand">
+        🎓 E-Club
+      </div>
+      <button class="menu-toggle">☰</button>
+      <div class="navbar-menu">
+        <a href="index.html">Home</a>
+        <a href="clubs.html">Clubs</a>
+        <a href="events.html">Events</a>
+        <a href="announcements.html">Announcements</a>
+      </div>
+      <div class="navbar-actions">
+        <div id="authLinks" class="flex-gap-md">
+          <a href="login.html" class="btn btn-outline btn-small">Login</a>
+          <a href="register.html" class="btn btn-primary btn-small">Register</a>
+        </div>
+        <div id="loggedInLinks" class="flex-gap-md">
+          <a href="dashboard.html">Dashboard</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <a href="status.html">Status</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <button onclick="App.logout()" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-weight: 500;">Logout</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Discover Your Perfect Club</h1>
+      <p>Join our vibrant community of student-led clubs and grow your passion, skills, and network</p>
+      <div class="flex-gap-md flex-center mt-2">
+        <a href="clubs.html" class="btn btn-primary">Explore Clubs</a>
+        <a href="#about" class="btn btn-outline">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="section" id="about">
+    <div class="container">
+      <h2 class="text-center mb-3">About Our Club System</h2>
+      <div class="grid grid-3">
+        <div class="card">
+          <div style="text-align: center; margin-bottom: var(--spacing-lg);">
+            <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">🎯</div>
+            <h3>Focus</h3>
+          </div>
+          <p>Our clubs are organized around student interests and academic pursuits, providing spaces for learning and growth in various domains.</p>
+        </div>
+        <div class="card">
+          <div style="text-align: center; margin-bottom: var(--spacing-lg);">
+            <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">🤝</div>
+            <h3>Community</h3>
+          </div>
+          <p>Connect with like-minded students, build lasting friendships, and create memories through collaborative projects and events.</p>
+        </div>
+        <div class="card">
+          <div style="text-align: center; margin-bottom: var(--spacing-lg);">
+            <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">⭐</div>
+            <h3>Excellence</h3>
+          </div>
+          <p>Develop new skills, gain practical experience, and enhance your resume through workshops, competitions, and leadership opportunities.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Clubs Section -->
+  <section class="section section-light">
+    <div class="container">
+      <h2 class="text-center mb-3">Featured Clubs</h2>
+      <p class="text-center text-secondary mb-3">Explore our diverse range of student organizations</p>
+      
+      <div class="grid grid-auto" id="featuredClubsContainer">
+        <!-- Clubs will be loaded here by JavaScript -->
+      </div>
+      
+      <div class="flex-center mt-3">
+        <a href="clubs.html" class="btn btn-primary">View All Clubs</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Section -->
+  <section class="section" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white;">
+    <div class="container text-center">
+      <h2 style="color: white;">Ready to Join?</h2>
+      <p style="color: rgba(255, 255, 255, 0.9); margin-bottom: var(--spacing-lg);">Register today and start exploring amazing opportunities</p>
+      <a href="register.html" class="btn btn-outline">Get Started</a>
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="text-center mb-3">Club Statistics</h2>
+      <div class="grid grid-4">
+        <div class="card text-center">
+          <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: var(--spacing-md);" id="statClubs">4</div>
+          <p class="text-secondary">Active Clubs</p>
+        </div>
+        <div class="card text-center">
+          <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: var(--spacing-md);" id="statMembers">0</div>
+          <p class="text-secondary">Total Members</p>
+        </div>
+        <div class="card text-center">
+          <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: var(--spacing-md);" id="statEvents">0</div>
+          <p class="text-secondary">Upcoming Events</p>
+        </div>
+        <div class="card text-center">
+          <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: var(--spacing-md);" id="statApplications">0</div>
+          <p class="text-secondary">Applications</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About</h3>
+          <p>E-Club Membership System helps students discover and join clubs that match their interests and passions.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <a href="clubs.html">Clubs</a>
+          <a href="events.html">Events</a>
+          <a href="announcements.html">Announcements</a>
+          <a href="register.html">Register</a>
+        </div>
+        <div class="footer-section">
+          <h3>Support</h3>
+          <a href="#">Contact Us</a>
+          <a href="#">FAQ</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <div class="footer-section">
+          <h3>Connect</h3>
+          <a href="#">Facebook</a>
+          <a href="#">Twitter</a>
+          <a href="#">Instagram</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 E-Club Membership System. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/clubs.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Load featured clubs
+    function loadFeaturedClubs() {
+      const container = document.getElementById('featuredClubsContainer');
+      const clubs = ClubsManager.getClubs();
+      
+      clubs.forEach(club => {
+        const clubCard = document.createElement('div');
+        clubCard.className = 'card club-card';
+        clubCard.innerHTML = `
+          <div class="club-logo">${club.logo}</div>
+          <h3>${club.name}</h3>
+          <p>${club.description}</p>
+          <div style="margin-bottom: var(--spacing-md); color: var(--text-secondary); font-size: var(--font-size-sm);">
+            <strong>${club.memberCount}</strong> members
+          </div>
+          <a href="club-details.html?id=${club.id}" class="btn btn-primary btn-small">View Details</a>
+        `;
+        container.appendChild(clubCard);
+      });
+    }
+
+    // Update statistics
+    function updateStatistics() {
+      const clubs = StorageManager.getClubs();
+      const totalMembers = clubs.reduce((sum, club) => sum + club.memberCount, 0);
+      const upcomingEvents = StorageManager.getUpcomingEvents();
+      const applications = StorageManager.getApplications();
+
+      document.getElementById('statClubs').textContent = clubs.length;
+      document.getElementById('statMembers').textContent = totalMembers;
+      document.getElementById('statEvents').textContent = upcomingEvents.length;
+      document.getElementById('statApplications').textContent = applications.length;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadFeaturedClubs();
+      updateStatistics();
+    });
+  </script>
+</body>
+</html>

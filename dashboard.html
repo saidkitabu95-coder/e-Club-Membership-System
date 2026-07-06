@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - E-Club Membership System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-brand">
+        🎓 E-Club
+      </div>
+      <button class="menu-toggle">☰</button>
+      <div class="navbar-menu">
+        <a href="index.html">Home</a>
+        <a href="clubs.html">Clubs</a>
+        <a href="events.html">Events</a>
+        <a href="announcements.html">Announcements</a>
+      </div>
+      <div class="navbar-actions">
+        <div id="authLinks" class="flex-gap-md">
+          <a href="login.html" class="btn btn-outline btn-small">Login</a>
+          <a href="register.html" class="btn btn-primary btn-small">Register</a>
+        </div>
+        <div id="loggedInLinks" class="flex-gap-md">
+          <a href="dashboard.html">Dashboard</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <a href="status.html">Status</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <button onclick="App.logout()" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-weight: 500;">Logout</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Layout -->
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="active">📊 Dashboard</a>
+        <a href="clubs.html">🏛️ All Clubs</a>
+        <a href="apply.html">📝 Apply for Club</a>
+        <a href="status.html">📋 My Status</a>
+        <a href="events.html">📅 Events</a>
+        <a href="announcements.html">📢 Announcements</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <!-- Header -->
+      <div class="dashboard-header">
+        <h1 id="welcomeMessage">Welcome Back!</h1>
+        <p class="user-info" id="userInfo">Loading...</p>
+      </div>
+
+      <!-- Statistics -->
+      <div class="stats-grid" id="statsContainer">
+        <!-- Statistics will be loaded here -->
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="dashboard-section">
+        <h3>Quick Actions</h3>
+        <div class="quick-actions">
+          <a href="clubs.html" class="action-btn action-btn-primary">🔍 Browse Clubs</a>
+          <a href="apply.html" class="action-btn action-btn-primary">📝 New Application</a>
+          <a href="status.html" class="action-btn action-btn-primary">📋 Check Status</a>
+          <a href="events.html" class="action-btn action-btn-primary">📅 View Events</a>
+        </div>
+      </div>
+
+      <!-- My Clubs -->
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h3 class="section-title">My Clubs</h3>
+          <div class="section-header-action">
+            <a href="apply.html" class="btn btn-primary btn-small">+ Apply</a>
+          </div>
+        </div>
+        <div id="myClubsContainer">
+          <!-- My clubs will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Recent Announcements -->
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h3 class="section-title">Recent Announcements</h3>
+          <a href="announcements.html" class="btn btn-outline btn-small">View All</a>
+        </div>
+        <div id="announcementsContainer">
+          <!-- Announcements will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Upcoming Events -->
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h3 class="section-title">Upcoming Events (From Your Clubs)</h3>
+          <a href="events.html" class="btn btn-outline btn-small">View All</a>
+        </div>
+        <div id="upcomingEventsContainer">
+          <!-- Events will be loaded here -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div id="loadingSpinner">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About</h3>
+          <p>E-Club Membership System helps students discover and join clubs that match their interests and passions.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <a href="clubs.html">Clubs</a>
+          <a href="events.html">Events</a>
+          <a href="announcements.html">Announcements</a>
+          <a href="register.html">Register</a>
+        </div>
+        <div class="footer-section">
+          <h3>Support</h3>
+          <a href="#">Contact Us</a>
+          <a href="#">FAQ</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <div class="footer-section">
+          <h3>Connect</h3>
+          <a href="#">Facebook</a>
+          <a href="#">Twitter</a>
+          <a href="#">Instagram</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 E-Club Membership System. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/clubs.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/application.js"></script>
+
+  <script>
+    // Load dashboard data
+    function loadDashboard() {
+      const user = AuthManager.getCurrentUser();
+      if (!user) return;
+
+      // Update welcome message
+      document.getElementById('welcomeMessage').textContent = `Welcome back, ${user.fullName}!`;
+      document.getElementById('userInfo').textContent = `Registration Number: ${user.regNumber} | Email: ${user.email}`;
+
+      // Load statistics
+      loadStatistics(user.id);
+
+      // Load my clubs
+      loadMyClubs(user.id);
+
+      // Load announcements
+      loadAnnouncements();
+
+      // Load upcoming events
+      loadUpcomingEvents(user.id);
+    }
+
+    // Load statistics
+    function loadStatistics(userId) {
+      const stats = DashboardManager.getStatistics(userId);
+      const container = document.getElementById('statsContainer');
+
+      container.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-icon">🏛️</div>
+          <div class="stat-value">${stats.totalClubs}</div>
+          <div class="stat-label">Total Clubs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📝</div>
+          <div class="stat-value">${stats.appliedClubs}</div>
+          <div class="stat-label">Applied Clubs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value">${stats.approvedClubs}</div>
+          <div class="stat-label">Member Clubs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-value">${stats.pendingClubs}</div>
+          <div class="stat-label">Pending</div>
+        </div>
+      `;
+    }
+
+    // Load my clubs
+    function loadMyClubs(userId) {
+      const apps = StorageManager.getStudentApplications(userId);
+      const container = document.getElementById('myClubsContainer');
+
+      if (apps.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <p>You haven't applied to any clubs yet</p>
+            <a href="apply.html" class="btn btn-primary btn-small">Apply Now</a>
+          </div>
+        `;
+        return;
+      }
+
+      const html = apps.map(app => {
+        const club = StorageManager.getClubById(app.clubId);
+        const statusClass = `status-badge status-${app.status}`;
+        
+        return `
+          <div class="club-item">
+            <div class="club-info">
+              <div class="club-name">${club.name}</div>
+              <div class="club-status">Applied on ${DashboardManager.formatDate(app.appliedAt)}</div>
+            </div>
+            <div class="club-action">
+              <span class="${statusClass}">${app.status.charAt(0).toUpperCase() + app.status.slice(1)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = html;
+    }
+
+    // Load announcements
+    function loadAnnouncements() {
+      const announcements = DashboardManager.getRecentAnnouncements(3);
+      const container = document.getElementById('announcementsContainer');
+
+      if (announcements.length === 0) {
+        container.innerHTML = '<p class="text-secondary">No announcements yet</p>';
+        return;
+      }
+
+      const html = announcements.map(ann => `
+        <div class="announcement-item">
+          <div class="announcement-header">
+            <div>
+              <div class="announcement-club">${ann.clubLogo} ${ann.clubName}</div>
+              <div class="announcement-title">${ann.title}</div>
+            </div>
+            <div class="announcement-date">${DashboardManager.getRelativeTime(ann.date)}</div>
+          </div>
+          <div class="announcement-content">${ann.content}</div>
+        </div>
+      `).join('');
+
+      container.innerHTML = html;
+    }
+
+    // Load upcoming events
+    function loadUpcomingEvents(userId) {
+      const events = DashboardManager.getUpcomingEventsForStudentClubs(userId, 3);
+      const container = document.getElementById('upcomingEventsContainer');
+
+      if (events.length === 0) {
+        container.innerHTML = `
+          <p class="text-secondary">No upcoming events from your clubs yet</p>
+        `;
+        return;
+      }
+
+      const html = events.map(event => {
+        const eventDate = new Date(event.date);
+        const day = eventDate.getDate();
+        const month = eventDate.toLocaleString('en-US', { month: 'short' });
+
+        return `
+          <div class="event-item">
+            <div class="event-date-box">
+              <div class="event-day">${day}</div>
+              <div class="event-month">${month}</div>
+            </div>
+            <div class="event-info">
+              <div class="event-title">${event.clubLogo} ${event.title}</div>
+              <div class="event-details">
+                <div class="event-detail">
+                  🕐 ${event.time}
+                </div>
+                <div class="event-detail">
+                  📍 ${event.venue}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = html;
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', loadDashboard);
+  </script>
+</body>
+</html>

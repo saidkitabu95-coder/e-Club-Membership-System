@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply for Club - E-Club Membership System</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-brand">
+        🎓 E-Club
+      </div>
+      <button class="menu-toggle">☰</button>
+      <div class="navbar-menu">
+        <a href="index.html">Home</a>
+        <a href="clubs.html">Clubs</a>
+        <a href="events.html">Events</a>
+        <a href="announcements.html">Announcements</a>
+      </div>
+      <div class="navbar-actions">
+        <div id="authLinks" class="flex-gap-md">
+          <a href="login.html" class="btn btn-outline btn-small">Login</a>
+          <a href="register.html" class="btn btn-primary btn-small">Register</a>
+        </div>
+        <div id="loggedInLinks" class="flex-gap-md">
+          <a href="dashboard.html">Dashboard</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <a href="status.html">Status</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <button onclick="App.logout()" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-weight: 500;">Logout</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Application Section -->
+  <section class="section" style="min-height: calc(100vh - 70px);">
+    <div class="container" style="max-width: 700px;">
+      <a href="dashboard.html" style="color: var(--primary-color); margin-bottom: var(--spacing-lg);">← Back to Dashboard</a>
+
+      <div class="card">
+        <div style="text-align: center; margin-bottom: var(--spacing-lg);">
+          <div style="font-size: 3rem; margin-bottom: var(--spacing-md);">📝</div>
+          <h2>Apply for Club Membership</h2>
+          <p class="text-secondary">Fill out the form to apply for membership</p>
+        </div>
+
+        <form id="applicationForm">
+          <div class="form-group">
+            <label for="club">Select Club *</label>
+            <select id="club" name="club" required>
+              <option value="">Choose a club</option>
+            </select>
+            <div class="form-error" id="clubError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="studentName">Full Name</label>
+            <input type="text" id="studentName" disabled>
+            <p style="font-size: var(--font-size-sm); color: var(--text-secondary); margin-top: var(--spacing-xs);">Auto-filled from your profile</p>
+          </div>
+
+          <div class="form-group">
+            <label for="studentEmail">Email Address</label>
+            <input type="email" id="studentEmail" disabled>
+            <p style="font-size: var(--font-size-sm); color: var(--text-secondary); margin-top: var(--spacing-xs);">Auto-filled from your profile</p>
+          </div>
+
+          <div class="form-group">
+            <label for="motivation">Motivation Statement *</label>
+            <textarea id="motivation" name="motivation" placeholder="Tell us why you want to join this club and what you hope to contribute..." required></textarea>
+            <p style="font-size: var(--font-size-sm); color: var(--text-secondary); margin-top: var(--spacing-xs);">Minimum 10 characters</p>
+            <div class="form-error" id="motivationError"></div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: var(--spacing-md);">Submit Application</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About</h3>
+          <p>E-Club Membership System helps students discover and join clubs that match their interests and passions.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <a href="clubs.html">Clubs</a>
+          <a href="events.html">Events</a>
+          <a href="announcements.html">Announcements</a>
+          <a href="register.html">Register</a>
+        </div>
+        <div class="footer-section">
+          <h3>Support</h3>
+          <a href="#">Contact Us</a>
+          <a href="#">FAQ</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <div class="footer-section">
+          <h3>Connect</h3>
+          <a href="#">Facebook</a>
+          <a href="#">Twitter</a>
+          <a href="#">Instagram</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 E-Club Membership System. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/clubs.js"></script>
+  <script src="js/application.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Load clubs into select
+    function loadClubs() {
+      const select = document.getElementById('club');
+      const clubs = ClubsManager.getClubs();
+
+      clubs.forEach(club => {
+        const option = document.createElement('option');
+        option.value = club.id;
+        option.textContent = club.name;
+        select.appendChild(option);
+      });
+    }
+
+    // Load user data
+    function loadUserData() {
+      const user = AuthManager.getCurrentUser();
+      if (user) {
+        document.getElementById('studentName').value = user.fullName;
+        document.getElementById('studentEmail').value = user.email;
+      }
+    }
+
+    // Get club ID from URL
+    function getClubIdFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('id');
+    }
+
+    // Clear error
+    function clearError(fieldId) {
+      const errorElement = document.getElementById(fieldId + 'Error');
+      if (errorElement) {
+        errorElement.textContent = '';
+      }
+    }
+
+    // Show error
+    function showError(fieldId, message) {
+      const errorElement = document.getElementById(fieldId + 'Error');
+      if (errorElement) {
+        errorElement.textContent = message;
+      }
+    }
+
+    // Form submission
+    document.getElementById('applicationForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      clearError('club');
+      clearError('motivation');
+
+      const clubId = document.getElementById('club').value;
+      const motivation = document.getElementById('motivation').value.trim();
+      const user = AuthManager.getCurrentUser();
+
+      if (!clubId) {
+        showError('club', 'Please select a club');
+        return;
+      }
+
+      const result = ApplicationManager.apply(clubId, user.id, motivation);
+
+      if (result.success) {
+        App.showNotification(result.message, 'success');
+        setTimeout(() => {
+          window.location.href = 'status.html';
+        }, 1500);
+      } else {
+        App.showNotification(result.message, 'error');
+      }
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadClubs();
+      loadUserData();
+
+      const clubIdFromUrl = getClubIdFromUrl();
+      if (clubIdFromUrl) {
+        document.getElementById('club').value = clubIdFromUrl;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clubs - E-Club Membership System</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-brand">
+        🎓 E-Club
+      </div>
+      <button class="menu-toggle">☰</button>
+      <div class="navbar-menu">
+        <a href="index.html">Home</a>
+        <a href="clubs.html">Clubs</a>
+        <a href="events.html">Events</a>
+        <a href="announcements.html">Announcements</a>
+      </div>
+      <div class="navbar-actions">
+        <div id="authLinks" class="flex-gap-md">
+          <a href="login.html" class="btn btn-outline btn-small">Login</a>
+          <a href="register.html" class="btn btn-primary btn-small">Register</a>
+        </div>
+        <div id="loggedInLinks" class="flex-gap-md">
+          <a href="dashboard.html">Dashboard</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <a href="status.html">Status</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <button onclick="App.logout()" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-weight: 500;">Logout</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="hero" style="padding: 60px var(--spacing-md);">
+    <div class="hero-content">
+      <h1>Our Clubs</h1>
+      <p>Discover and join clubs that match your interests</p>
+    </div>
+  </section>
+
+  <!-- Clubs Section -->
+  <section class="section">
+    <div class="container">
+      <!-- Search and Filter -->
+      <div style="margin-bottom: var(--spacing-lg);">
+        <div class="grid grid-2" style="gap: var(--spacing-md);">
+          <div class="form-group">
+            <input 
+              type="text" 
+              id="searchInput" 
+              placeholder="Search clubs..." 
+              style="padding: var(--spacing-md);"
+            >
+          </div>
+          <div class="form-group">
+            <select id="categoryFilter" style="padding: var(--spacing-md);">
+              <option value="">All Categories</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clubs Grid -->
+      <div class="grid grid-auto" id="clubsContainer">
+        <!-- Clubs will be loaded here by JavaScript -->
+      </div>
+
+      <!-- No Results -->
+      <div id="noResults" class="empty-state hidden">
+        <div class="empty-state-icon">🔍</div>
+        <p>No clubs found matching your search</p>
+        <a href="clubs.html" class="btn btn-primary btn-small">Clear Filters</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About</h3>
+          <p>E-Club Membership System helps students discover and join clubs that match their interests and passions.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <a href="clubs.html">Clubs</a>
+          <a href="events.html">Events</a>
+          <a href="announcements.html">Announcements</a>
+          <a href="register.html">Register</a>
+        </div>
+        <div class="footer-section">
+          <h3>Support</h3>
+          <a href="#">Contact Us</a>
+          <a href="#">FAQ</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <div class="footer-section">
+          <h3>Connect</h3>
+          <a href="#">Facebook</a>
+          <a href="#">Twitter</a>
+          <a href="#">Instagram</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 E-Club Membership System. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/clubs.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    let allClubs = [];
+
+    // Load clubs
+    function loadClubs(clubs = null) {
+      const container = document.getElementById('clubsContainer');
+      const noResults = document.getElementById('noResults');
+      const clubsToDisplay = clubs || ClubsManager.getClubs();
+      
+      container.innerHTML = '';
+
+      if (clubsToDisplay.length === 0) {
+        container.classList.add('hidden');
+        noResults.classList.remove('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+      noResults.classList.add('hidden');
+
+      clubsToDisplay.forEach(club => {
+        const clubCard = document.createElement('div');
+        clubCard.className = 'card club-card';
+        clubCard.innerHTML = `
+          <div class="club-logo">${club.logo}</div>
+          <h3>${club.name}</h3>
+          <p style="margin-bottom: var(--spacing-md);">${club.description}</p>
+          
+          <div style="flex-grow: 1;">
+            <p style="font-size: var(--font-size-sm); margin-bottom: var(--spacing-md);">
+              <strong>Category:</strong> ${club.category}
+            </p>
+            <p style="font-size: var(--font-size-sm); margin-bottom: var(--spacing-md);">
+              <strong>Members:</strong> ${club.memberCount}
+            </p>
+            <p style="font-size: var(--font-size-sm); margin-bottom: var(--spacing-md);">
+              <strong>Fee:</strong> ${club.fee}
+            </p>
+          </div>
+
+          <div class="card-footer" style="margin-top: auto;">
+            <a href="club-details.html?id=${club.id}" class="btn btn-primary" style="flex: 1; text-align: center;">View Details</a>
+          </div>
+        `;
+        container.appendChild(clubCard);
+      });
+    }
+
+    // Load categories
+    function loadCategories() {
+      const select = document.getElementById('categoryFilter');
+      const categories = ClubsManager.getCategories();
+      
+      categories.forEach(category => {
+        if (category !== 'All') {
+          const option = document.createElement('option');
+          option.value = category;
+          option.textContent = category;
+          select.appendChild(option);
+        }
+      });
+    }
+
+    // Search and filter
+    function filterClubs() {
+      const searchTerm = document.getElementById('searchInput').value;
+      const category = document.getElementById('categoryFilter').value;
+
+      let filtered = allClubs;
+
+      if (searchTerm) {
+        filtered = filtered.filter(club =>
+          club.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          club.description.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+
+      if (category) {
+        filtered = filtered.filter(club => club.category === category);
+      }
+
+      loadClubs(filtered);
+    }
+
+    // Event listeners
+    document.getElementById('searchInput').addEventListener('input', filterClubs);
+    document.getElementById('categoryFilter').addEventListener('change', filterClubs);
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      allClubs = ClubsManager.getClubs();
+      loadClubs();
+      loadCategories();
+    });
+  </script>
+</body>
+</html>

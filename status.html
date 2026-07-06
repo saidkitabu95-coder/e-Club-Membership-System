@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Membership Status - E-Club Membership System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-brand">
+        🎓 E-Club
+      </div>
+      <button class="menu-toggle">☰</button>
+      <div class="navbar-menu">
+        <a href="index.html">Home</a>
+        <a href="clubs.html">Clubs</a>
+        <a href="events.html">Events</a>
+        <a href="announcements.html">Announcements</a>
+      </div>
+      <div class="navbar-actions">
+        <div id="authLinks" class="flex-gap-md">
+          <a href="login.html" class="btn btn-outline btn-small">Login</a>
+          <a href="register.html" class="btn btn-primary btn-small">Register</a>
+        </div>
+        <div id="loggedInLinks" class="flex-gap-md">
+          <a href="dashboard.html">Dashboard</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <a href="status.html">Status</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <button onclick="App.logout()" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-weight: 500;">Logout</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Status Section -->
+  <section class="section">
+    <div class="container">
+      <a href="dashboard.html" style="color: var(--primary-color); margin-bottom: var(--spacing-lg);">← Back to Dashboard</a>
+
+      <div class="card mb-3">
+        <h2>My Membership Applications</h2>
+        <p class="text-secondary">Track the status of your club membership applications</p>
+      </div>
+
+      <!-- Status Tabs -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+        <button class="status-tab btn btn-outline" onclick="filterStatus('all')" style="width: 100%;">All</button>
+        <button class="status-tab btn btn-outline" onclick="filterStatus('pending')" style="width: 100%;">Pending</button>
+        <button class="status-tab btn btn-outline" onclick="filterStatus('approved')" style="width: 100%;">Approved</button>
+      </button>
+      <button class="status-tab btn btn-outline" onclick="filterStatus('rejected')" style="width: 100%;">Rejected</button>
+      </div>
+
+      <!-- Applications List -->
+      <div id="applicationsContainer">
+        <!-- Applications will be loaded here -->
+      </div>
+
+      <!-- No Applications -->
+      <div id="noApplications" class="empty-state hidden">
+        <div class="empty-state-icon">📭</div>
+        <p>You don't have any applications yet</p>
+        <a href="apply.html" class="btn btn-primary btn-small">Apply Now</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About</h3>
+          <p>E-Club Membership System helps students discover and join clubs that match their interests and passions.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <a href="clubs.html">Clubs</a>
+          <a href="events.html">Events</a>
+          <a href="announcements.html">Announcements</a>
+          <a href="register.html">Register</a>
+        </div>
+        <div class="footer-section">
+          <h3>Support</h3>
+          <a href="#">Contact Us</a>
+          <a href="#">FAQ</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <div class="footer-section">
+          <h3>Connect</h3>
+          <a href="#">Facebook</a>
+          <a href="#">Twitter</a>
+          <a href="#">Instagram</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 E-Club Membership System. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/clubs.js"></script>
+  <script src="js/application.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    let allApplications = [];
+    let currentFilter = 'all';
+
+    // Load applications
+    function loadApplications() {
+      const user = AuthManager.getCurrentUser();
+      allApplications = ApplicationManager.getStudentApplications(user.id);
+
+      if (allApplications.length === 0) {
+        document.getElementById('applicationsContainer').innerHTML = '';
+        document.getElementById('noApplications').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('noApplications').classList.add('hidden');
+      displayApplications();
+    }
+
+    // Display applications based on filter
+    function displayApplications() {
+      const container = document.getElementById('applicationsContainer');
+      let filtered = allApplications;
+
+      if (currentFilter !== 'all') {
+        filtered = allApplications.filter(app => app.status === currentFilter);
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <p>No applications found with this status</p>
+          </div>
+        `;
+        return;
+      }
+
+      const html = filtered.map(app => {
+        const statusClass = `status-badge status-${app.status}`;
+        const statusText = app.status.charAt(0).toUpperCase() + app.status.slice(1);
+        const appliedDate = DashboardManager.formatDate(app.appliedAt);
+
+        let statusIcon = '';
+        if (app.status === 'pending') statusIcon = '⏳';
+        else if (app.status === 'approved') statusIcon = '✅';
+        else if (app.status === 'rejected') statusIcon = '❌';
+
+        return `
+          <div class="card mb-3">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: var(--spacing-md);">
+              <div>
+                <h3 style="display: flex; align-items: center; gap: var(--spacing-md);">
+                  ${app.clubLogo} ${app.clubName}
+                </h3>
+                <p class="text-secondary">Applied on: ${appliedDate}</p>
+              </div>
+              <span class="${statusClass}">${statusIcon} ${statusText}</span>
+            </div>
+
+            <div style="background-color: var(--bg-secondary); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);">
+              <strong style="display: block; margin-bottom: var(--spacing-xs);">Your Motivation:</strong>
+              <p>${app.motivation}</p>
+            </div>
+
+            <div style="display: flex; gap: var(--spacing-md);">
+              <a href="club-details.html?id=${app.clubId}" class="btn btn-outline btn-small">View Club</a>
+              ${app.status === 'rejected' ? `<a href="apply.html?id=${app.clubId}" class="btn btn-primary btn-small">Reapply</a>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = html;
+    }
+
+    // Filter by status
+    function filterStatus(status) {
+      currentFilter = status;
+      displayApplications();
+
+      // Update button styles
+      document.querySelectorAll('.status-tab').forEach(btn => {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline');
+      });
+      event.target.classList.remove('btn-outline');
+      event.target.classList.add('btn-primary');
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', loadApplications);
+  </script>
+</body>
+</html>

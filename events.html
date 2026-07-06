@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events - E-Club Membership System</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-brand">
+        🎓 E-Club
+      </div>
+      <button class="menu-toggle">☰</button>
+      <div class="navbar-menu">
+        <a href="index.html">Home</a>
+        <a href="clubs.html">Clubs</a>
+        <a href="events.html">Events</a>
+        <a href="announcements.html">Announcements</a>
+      </div>
+      <div class="navbar-actions">
+        <div id="authLinks" class="flex-gap-md">
+          <a href="login.html" class="btn btn-outline btn-small">Login</a>
+          <a href="register.html" class="btn btn-primary btn-small">Register</a>
+        </div>
+        <div id="loggedInLinks" class="flex-gap-md">
+          <a href="dashboard.html">Dashboard</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <a href="status.html">Status</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <button onclick="App.logout()" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-weight: 500;">Logout</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="hero" style="padding: 60px var(--spacing-md);">
+    <div class="hero-content">
+      <h1>Upcoming Events</h1>
+      <p>Discover exciting club activities and networking opportunities</p>
+    </div>
+  </section>
+
+  <!-- Events Section -->
+  <section class="section">
+    <div class="container">
+      <div id="eventsContainer">
+        <!-- Events will be loaded here -->
+      </div>
+
+      <!-- No Events -->
+      <div id="noEvents" class="empty-state hidden">
+        <div class="empty-state-icon">📭</div>
+        <p>No upcoming events scheduled</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About</h3>
+          <p>E-Club Membership System helps students discover and join clubs that match their interests and passions.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <a href="clubs.html">Clubs</a>
+          <a href="events.html">Events</a>
+          <a href="announcements.html">Announcements</a>
+          <a href="register.html">Register</a>
+        </div>
+        <div class="footer-section">
+          <h3>Support</h3>
+          <a href="#">Contact Us</a>
+          <a href="#">FAQ</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <div class="footer-section">
+          <h3>Connect</h3>
+          <a href="#">Facebook</a>
+          <a href="#">Twitter</a>
+          <a href="#">Instagram</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 E-Club Membership System. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/clubs.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Load events
+    function loadEvents() {
+      const events = StorageManager.getUpcomingEvents();
+      const container = document.getElementById('eventsContainer');
+      const noEvents = document.getElementById('noEvents');
+
+      if (events.length === 0) {
+        container.innerHTML = '';
+        noEvents.classList.remove('hidden');
+        return;
+      }
+
+      noEvents.classList.add('hidden');
+
+      const html = events.map(event => {
+        const club = StorageManager.getClubById(event.clubId);
+        const eventDate = new Date(event.date);
+        const dayOfWeek = eventDate.toLocaleString('en-US', { weekday: 'short' });
+        const day = eventDate.getDate();
+        const month = eventDate.toLocaleString('en-US', { month: 'short' });
+
+        return `
+          <div class="card mb-3">
+            <div style="display: grid; grid-template-columns: 120px 1fr; gap: var(--spacing-lg);">
+              <div style="background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; border-radius: var(--radius-md); padding: var(--spacing-lg); text-align: center;">
+                <div style="font-size: 1.25rem; font-weight: 700;">${day}</div>
+                <div style="font-size: var(--font-size-sm); opacity: 0.9;">${month}</div>
+                <div style="font-size: var(--font-size-sm); margin-top: var(--spacing-xs);">${dayOfWeek}</div>
+              </div>
+
+              <div>
+                <h3 style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+                  ${club ? club.logo : '🏢'} ${event.title}
+                </h3>
+                <p style="color: var(--primary-color); font-weight: 600; margin-bottom: var(--spacing-md);">
+                  ${club ? club.name : 'Unknown Club'}
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-md); margin-bottom: var(--spacing-md); color: var(--text-secondary); font-size: var(--font-size-sm);">
+                  <div>
+                    <strong>🕐 Time:</strong> ${event.time}
+                  </div>
+                  <div>
+                    <strong>📍 Venue:</strong> ${event.venue}
+                  </div>
+                  <div>
+                    <strong>👤 Speaker:</strong> ${event.speaker}
+                  </div>
+                </div>
+                <p class="text-secondary">${event.description}</p>
+                <a href="club-details.html?id=${event.clubId}" class="btn btn-outline btn-small">View Club</a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = html;
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', loadEvents);
+  </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - E-Club Membership System</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-brand">
+        🎓 E-Club
+      </div>
+      <button class="menu-toggle">☰</button>
+      <div class="navbar-menu">
+        <a href="index.html">Home</a>
+        <a href="clubs.html">Clubs</a>
+        <a href="events.html">Events</a>
+        <a href="announcements.html">Announcements</a>
+      </div>
+      <div class="navbar-actions">
+        <div id="authLinks" class="flex-gap-md">
+          <a href="login.html" class="btn btn-outline btn-small">Login</a>
+          <a href="register.html" class="btn btn-primary btn-small">Register</a>
+        </div>
+        <div id="loggedInLinks" class="flex-gap-md">
+          <a href="dashboard.html">Dashboard</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <a href="status.html">Status</a>
+          <span style="color: var(--text-secondary);">|</span>
+          <button onclick="App.logout()" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-weight: 500;">Logout</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Login Section -->
+  <section class="section" style="min-height: calc(100vh - 70px); display: flex; align-items: center;">
+    <div class="container" style="max-width: 500px;">
+      <div class="card">
+        <div style="text-align: center; margin-bottom: var(--spacing-lg);">
+          <div style="font-size: 3rem; margin-bottom: var(--spacing-md);">🔐</div>
+          <h2>Login</h2>
+          <p class="text-secondary">Access your E-Club account</p>
+        </div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" required>
+            <div class="form-error" id="emailError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password *</label>
+            <input type="password" id="password" name="password" required>
+            <div class="form-error" id="passwordError"></div>
+          </div>
+
+          <div class="form-group">
+            <div class="checkbox-group">
+              <input type="checkbox" id="rememberMe" name="rememberMe">
+              <label for="rememberMe" style="margin: 0;">Remember me</label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: var(--spacing-md);">Login</button>
+
+          <div style="text-align: center; margin-bottom: var(--spacing-md);">
+            <a href="#" style="color: var(--primary-color); font-size: var(--font-size-sm);">Forgot Password?</a>
+          </div>
+
+          <p style="text-align: center; color: var(--text-secondary);">
+            Don't have an account? <a href="register.html">Register here</a>
+          </p>
+        </form>
+
+        <!-- Demo Credentials -->
+        <div style="background-color: var(--bg-secondary); padding: var(--spacing-md); border-radius: var(--radius-md); margin-top: var(--spacing-lg);">
+          <strong style="font-size: var(--font-size-sm);">Demo Credentials:</strong>
+          <p style="font-size: var(--font-size-sm); color: var(--text-secondary); margin-top: var(--spacing-xs);">
+            For demo purposes, you can register a new account using any details.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About</h3>
+          <p>E-Club Membership System helps students discover and join clubs that match their interests and passions.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <a href="clubs.html">Clubs</a>
+          <a href="events.html">Events</a>
+          <a href="announcements.html">Announcements</a>
+          <a href="register.html">Register</a>
+        </div>
+        <div class="footer-section">
+          <h3>Support</h3>
+          <a href="#">Contact Us</a>
+          <a href="#">FAQ</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <div class="footer-section">
+          <h3>Connect</h3>
+          <a href="#">Facebook</a>
+          <a href="#">Twitter</a>
+          <a href="#">Instagram</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 E-Club Membership System. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Pre-fill email if remembered
+    document.addEventListener('DOMContentLoaded', () => {
+      const rememberedEmail = AuthManager.getRememberedEmail();
+      if (rememberedEmail) {
+        document.getElementById('email').value = rememberedEmail;
+        document.getElementById('rememberMe').checked = true;
+      }
+    });
+
+    // Clear error message
+    function clearError(fieldId) {
+      const errorElement = document.getElementById(fieldId + 'Error');
+      if (errorElement) {
+        errorElement.textContent = '';
+      }
+    }
+
+    // Show error message
+    function showError(fieldId, message) {
+      const errorElement = document.getElementById(fieldId + 'Error');
+      if (errorElement) {
+        errorElement.textContent = message;
+      }
+    }
+
+    // Login form submission
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      clearError('email');
+      clearError('password');
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const rememberMe = document.getElementById('rememberMe').checked;
+
+      const result = AuthManager.login(email, password);
+
+      if (result.success) {
+        if (rememberMe) {
+          AuthManager.rememberUser(email);
+        } else {
+          AuthManager.clearRememberedEmail();
+        }
+
+        App.showNotification(result.message, 'success');
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 1500);
+      } else {
+        App.showNotification(result.message, 'error');
+      }
+    });
+  </script>
+</body>
+</html>
