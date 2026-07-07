@@ -30,30 +30,46 @@ def register(request):
         })
 
     return JsonResponse({"message": "Method not allowed"}, status=405)
-    
 
+@csrf_exempt
 def login(request):
+
     if request.method == "POST":
+
         data = json.loads(request.body)
 
-        email = data.get('email')
-        password = data.get('password')
+        email = data.get("email")
+        password = data.get("password")
 
         try:
             user = Student.objects.get(email=email)
+
             if check_password(password, user.password):
-              return JsonResponse({"message": "Login successful"})
+                return JsonResponse({
+                    "message": "Login successful",
+                    "student": {
+                        "id": user.id,
+                        "full_name": user.full_name,
+                        "email": user.email,
+                        "year_of_study": user.year_of_study
+                    }
+                })
+
             else:
-             return JsonResponse({"message": "Wrong password"}, status=400)
+                return JsonResponse({
+                    "message": "Wrong password",
+                    "success": False
+                }, status=400)
 
         except Student.DoesNotExist:
-            return JsonResponse({"message": "User not found"}, status=404)
+            return JsonResponse({
+                "message": "User not found",
+                "success": False
+            }, status=404)
 
-    elif request.method == "GET":
-        return JsonResponse({"message": "Use POST to login"}, status=200)
-
-    return JsonResponse({"message": "Method not allowed"}, status=405)
-
+    return JsonResponse({
+        "message": "Method not allowed"
+    }, status=405)
 
 def home(request):
     return JsonResponse({"message": "Welcome to E-Club Membership System!"})
