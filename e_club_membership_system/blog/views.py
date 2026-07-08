@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Student
+from .models import Student, Club
 import json
 from django.contrib.auth.hashers import make_password, check_password
 
@@ -73,3 +73,29 @@ def login(request):
 
 def home(request):
     return JsonResponse({"message": "Welcome to E-Club Membership System!"})
+
+
+def clubs(request):
+    clubs = Club.objects.all()
+
+    data = []
+
+    for club in clubs:
+        data.append({
+            "id": club.id,
+            "name": club.name,
+            "description": club.description,
+            "full_description": club.full_description,
+            "category": club.category,
+            "logo": club.logo,
+            "requirements": club.requirements,
+            "founded": club.founded,
+            "president": club.president,
+            "memberCount": club.memberCount,
+            "fee": club.fee,
+            "objectives": club.objectives
+        })
+
+    return JsonResponse(data, safe=False)
+
+   
