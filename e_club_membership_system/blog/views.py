@@ -1,12 +1,16 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Student, Club
+from .models import Student, Club, Application
+from .serializers import StudentSerializer, ClubSerializer, ApplicationSerializer
 import json
 from django.contrib.auth.hashers import make_password, check_password
+from rest_framework_simplejwt.tokens import RefreshToken
 
 @csrf_exempt
 def register(request):
+
     if request.method == "POST":
+
         data = json.loads(request.body)
 
         full_name = data.get('fullName') or data.get('full_name')
@@ -14,22 +18,35 @@ def register(request):
         password = data.get('password')
         year_of_study = data.get('year') or data.get('year_of_study')
 
-        if Student.objects.filter(email=email).exists():
-            return JsonResponse({"message": "Email already exists"}, status=400)
 
-        Student.objects.create(
+        if Student.objects.filter(email=email).exists():
+            return JsonResponse({
+                "message": "Email already exists"
+            }, status=400)
+
+
+        student = Student.objects.create(
             full_name=full_name,
             email=email,
             password=make_password(password),
             year_of_study=year_of_study
         )
 
+
+        serializer = StudentSerializer(student)
+
+
         return JsonResponse({
             "message": "Registered successfully",
-            "success": True
-        })
+            "student": serializer.data
+        }, status=201)
 
-    return JsonResponse({"message": "Method not allowed"}, status=405)
+
+    return JsonResponse({
+        "message": "Method not allowed"
+    }, status=405)
+
+       
 
 @csrf_exempt
 def login(request):
