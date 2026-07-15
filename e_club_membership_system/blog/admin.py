@@ -1,17 +1,15 @@
 from django.contrib import admin
-from .models import Student, Club
+from .models import (
+    Student,
+    Club,
+    Application,
+    Event,
+    Announcement
+)
 
 
-@admin.register(Student)
-class StudentAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'email', 'year_of_study')
-
-
-@admin.register(Club)
-class ClubAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'category',
-        'memberCount',
-        'fee'
-    )
+admin.site.register(Student)
+admin.site.register(Club)
+admin.site.register(Application)
+admin.site.register(Event)
+admin.site.register(Announcement)

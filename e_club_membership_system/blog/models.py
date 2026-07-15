@@ -47,4 +47,25 @@ class Application(models.Model):
         unique_together = ('student', 'club')
 
     def __str__(self):
-        return f"{self.student.full_name} - {self.club.name}"        
+        return f"{self.student.full_name} - {self.club.name}" 
+
+class Event(models.Model):
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    event_date = models.DateField()
+    event_time = models.TimeField()
+    venue = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.title
+
+
+class Announcement(models.Model):
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
