@@ -26,9 +26,29 @@ class ClubSerializer(serializers.ModelSerializer):
 
 class ApplicationSerializer(serializers.ModelSerializer):
 
+    student_name = serializers.CharField(
+        source="student.full_name",
+        read_only=True
+    )
+
+    club_name = serializers.CharField(
+        source="club.name",
+        read_only=True
+    )
+
+
     class Meta:
         model = Application
-        fields = "__all__"
+
+        fields = [
+            "id",
+            "student",
+            "student_name",
+            "club",
+            "club_name",
+            "status",
+            "applied_at"
+        ]
 
 
 

@@ -168,7 +168,10 @@ def all_applications(request):
 def approve_application(request, application_id):
 
     try:
-        application = Application.objects.get(id=application_id)
+
+        application = Application.objects.get(
+            id=application_id
+        )
 
     except Application.DoesNotExist:
 
@@ -176,10 +179,23 @@ def approve_application(request, application_id):
             "message": "Application not found"
         }, status=404)
 
+
+
     application.status = "Approved"
     application.save()
 
+
+
+    club = application.club
+
+    club.memberCount += 1
+
+    club.save()
+
+
+
     serializer = ApplicationSerializer(application)
+
 
     return JsonResponse({
         "message": "Application Approved",
