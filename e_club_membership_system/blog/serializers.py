@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import (
     Student,
+    Admin,
     Club,
     Application,
     Event,
@@ -14,7 +15,11 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = "__all__"
 
+class AdminSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = Admin
+        fields = "__all__"
 
 class ClubSerializer(serializers.ModelSerializer):
 

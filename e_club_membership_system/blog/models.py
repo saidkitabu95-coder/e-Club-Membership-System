@@ -11,6 +11,13 @@ class Student(models.Model):
     def __str__(self):
         return self.full_name
 
+class Admin(models.Model):
+    full_name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.full_name
 
 class Club(models.Model):
     name = models.CharField(max_length=100)
