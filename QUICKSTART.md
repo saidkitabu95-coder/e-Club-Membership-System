@@ -72,25 +72,25 @@
 ### 1. PyCon Club 🐍
 - Focus on Python programming
 - **Fee**: Free
-- **Members**: 245
+- **Members**: 
 - **Requirements**: Any student interested in Python
 
 ### 2. Cybersecurity Club 🔒
 - Learn about digital security
 - **Fee**: Free
-- **Members**: 189
+- **Members**: 
 - **Requirements**: Basic IT knowledge preferred
 
 ### 3. GIS Club 🗺️
 - Geographic Information Systems
 - **Fee**: Free
-- **Members**: 124
+- **Members**: 
 - **Requirements**: Interest in geography and mapping
 
 ### 4. Multimedia Club 🎨
 - Video production, design, and media
 - **Fee**: Free
-- **Members**: 178
+- **Members**: 
 - **Requirements**: Passion for creative arts
 
 ## 💡 Tips & Tricks
@@ -222,4 +222,4 @@ Explore the features, apply for clubs, and enjoy the E-Club Membership System!
 - Open browser DevTools (F12) to inspect elements
 - Check localStorage in DevTools → Application → Local Storage
 
-**Last Updated**: 2024
+**Last Updated**: 2026

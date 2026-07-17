@@ -18,26 +18,11 @@
       </div>
       <button class="menu-toggle">☰</button>
       <div class="navbar-menu">
-        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
         <a href="clubs.html">Clubs</a>
-        <a href="events.html">Events</a>
-        <a href="announcements.html">Announcements</a>
+       
       </div>
-      <div class="navbar-actions">
-        <div id="authLinks" class="flex-gap-md">
-          <a href="login.html" class="btn btn-outline btn-small">Login</a>
-          <a href="register.html" class="btn btn-primary btn-small">Register</a>
-        </div>
-        <div id="loggedInLinks" class="flex-gap-md">
-          <a href="dashboard.html">Dashboard</a>
-          <span style="color: var(--text-secondary);">|</span>
-          <a href="status.html">Status</a>
-          <span style="color: var(--text-secondary);">|</span>
-          <button onclick="App.logout()" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-weight: 500;">Logout</button>
-        </div>
-        <button class="theme-toggle" id="themeToggle">🌙</button>
-      </div>
-    </div>
+    
   </nav>
 
   <!-- Page Header -->
@@ -84,41 +69,7 @@
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>About</h3>
-          <p>E-Club Membership System helps students discover and join clubs that match their interests and passions.</p>
-        </div>
-        <div class="footer-section">
-          <h3>Quick Links</h3>
-          <a href="clubs.html">Clubs</a>
-          <a href="events.html">Events</a>
-          <a href="announcements.html">Announcements</a>
-          <a href="register.html">Register</a>
-        </div>
-        <div class="footer-section">
-          <h3>Support</h3>
-          <a href="#">Contact Us</a>
-          <a href="#">FAQ</a>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-        </div>
-        <div class="footer-section">
-          <h3>Connect</h3>
-          <a href="#">Facebook</a>
-          <a href="#">Twitter</a>
-          <a href="#">Instagram</a>
-          <a href="#">LinkedIn</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>Copyright @2026 e-Club Membership System. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
+  
 
   <script src="js/storage.js"></script>
   <script src="js/auth.js"></script>
@@ -158,8 +109,8 @@
               <strong>Category:</strong> ${club.category}
             </p>
             <p style="font-size: var(--font-size-sm); margin-bottom: var(--spacing-md);">
-              <strong>Members:</strong> ${club.memberCount}
-            </p>
+              <strong>Members:</strong> ${club.memberCount ?? 0}
+              </p>
             <p style="font-size: var(--font-size-sm); margin-bottom: var(--spacing-md);">
               <strong>Fee:</strong> ${club.fee}
             </p>
@@ -213,12 +164,18 @@
     document.getElementById('searchInput').addEventListener('input', filterClubs);
     document.getElementById('categoryFilter').addEventListener('change', filterClubs);
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', () => {
-      allClubs = ClubsManager.getClubs();
-      loadClubs();
-      loadCategories();
-    });
+   // Initialize
+document.addEventListener('DOMContentLoaded', async () => {
+
+  await ClubsManager.loadClubs();
+
+  allClubs = ClubsManager.getClubs();
+
+  loadClubs(allClubs);
+
+  loadCategories();
+
+});
   </script>
 </body>
 </html>

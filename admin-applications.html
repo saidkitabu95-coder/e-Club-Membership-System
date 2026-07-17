@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Applications</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+
+<aside class="sidebar">
+
+<h2>
+E-Club Admin
+</h2>
+
+
+<a href="admin-dashboard.html">
+📊 Dashboard
+</a>
+
+
+<a href="admin-students.html">
+👨‍🎓 Students
+</a>
+
+
+<a href="admin-clubs.html">
+🏛 Clubs
+</a>
+
+
+<a href="admin-applications.html">
+📝 Applications
+</a>
+
+
+<a href="admin-events.html">
+📅 Events
+</a>
+
+
+<a href="admin-announcements.html">
+📢 Announcements
+</a>
+
+
+<a href="#" onclick="logout()">
+🚪 Logout
+</a>
+
+
+</aside>
+
+
+<script src="js/admin-auth.js"></script>
+<script>
+
+async function loadApplications(){
+
+
+const response = await fetch(
+"http://127.0.0.1:8000/api/applications/"
+);
+
+
+const applications = await response.json();
+
+
+let html="";
+
+applications.forEach(app => {
+
+    let actionButtons = "";
+
+    if (app.status === "Pending") {
+
+        actionButtons = `
+            <button onclick="approve(${app.id})" class="btn btn-success">
+                Approve
+            </button>
+
+            <button onclick="reject(${app.id})" class="btn btn-danger">
+                Reject
+            </button>
+        `;
+
+    } else if (app.status === "Approved") {
+
+        actionButtons = `
+            <button class="btn btn-success" disabled>
+                ✓ Approved
+            </button>
+        `;
+
+    } else {
+
+        actionButtons = `
+            <button class="btn btn-danger" disabled>
+                ✗ Rejected
+            </button>
+        `;
+
+    }
+
+    html += `
+        <div class="card">
+
+            <h3>Student: ${app.student_name}</h3>
+
+            <p>
+                <strong>Club:</strong> ${app.club_name}
+            </p>
+
+            <p>
+                <strong>Status:</strong> ${app.status}
+            </p>
+
+            ${actionButtons}
+
+        </div>
+    `;
+
+});
+
+
+document.getElementById(
+"applicationsContainer"
+).innerHTML = html;
+
+}
+
+
+async function approve(id){
+
+
+await fetch(
+`http://127.0.0.1:8000/api/application/${id}/approve/`,
+{
+method:"POST"
+}
+);
+
+
+alert("Approved");
+
+
+loadApplications();
+
+
+}
+
+
+
+async function reject(id){
+
+
+await fetch(
+`http://127.0.0.1:8000/api/application/${id}/reject/`,
+{
+method:"POST"
+}
+);
+
+
+alert("Rejected");
+
+
+loadApplications();
+
+
+}
+
+
+
+
+loadApplications();
+
+
+</script>
+
+
+</body>
+</html>

@@ -118,3 +118,19 @@ const DashboardManager = {
     return this.formatDate(dateString);
   }
 };
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const student = JSON.parse(localStorage.getItem("student"));
+
+    if (!student) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    // Student Information
+    document.getElementById("studentName").textContent = student.full_name;
+    document.getElementById("studentEmail").textContent = student.email;
+    document.getElementById("studentYear").textContent = student.year_of_study;
+
+});

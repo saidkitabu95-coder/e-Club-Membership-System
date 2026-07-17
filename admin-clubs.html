@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Clubs</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h2>Add New Club</h2>
+
+<div class="card">
+
+<input id="name" placeholder="Club Name">
+
+<br><br>
+
+<input id="category" placeholder="Category">
+
+<br><br>
+
+<input id="logo" placeholder="Logo">
+
+<br><br>
+
+<textarea id="description" placeholder="Description"></textarea>
+
+<br><br>
+
+<textarea id="full_description" placeholder="Full Description"></textarea>
+
+<br><br>
+
+<input id="president" placeholder="President">
+
+<br><br>
+
+<input id="founded" placeholder="Founded Year">
+
+<br><br>
+
+<input id="fee" placeholder="Fee">
+
+<br><br>
+
+<button onclick="addClub()" class="btn btn-primary">
+Add Club
+</button>
+
+</div>
+<div class="card" id="editForm" style="display:none;">
+
+<h2>Edit Club</h2>
+
+<input id="edit_id" type="hidden">
+
+
+<input id="edit_name" placeholder="Club Name">
+
+<br><br>
+
+<input id="edit_category" placeholder="Category">
+
+<br><br>
+
+<input id="edit_logo" placeholder="Logo">
+
+<br><br>
+
+<textarea id="edit_description" placeholder="Description"></textarea>
+
+<br><br>
+
+<input id="edit_president" placeholder="President">
+
+<br><br>
+
+<input id="edit_fee" placeholder="Fee">
+
+
+<br><br>
+
+<button onclick="updateClub()" class="btn btn-success">
+Update
+</button>
+
+
+<button onclick="closeEdit()" class="btn btn-danger">
+Cancel
+</button>
+
+</div>
+
+<hr>
+
+
+<div id="clubsContainer">
+Loading...
+</div>
+
+<script>
+
+async function loadClubs() {
+
+    const response = await fetch(
+        "http://127.0.0.1:8000/api/admin/clubs/"
+    );
+
+    const clubs = await response.json();
+
+    let html = "";
+
+    clubs.forEach(club => {
+
+        html += `
+        <div class="card">
+
+            <h2>${club.name}</h2>
+
+            <p>${club.description}</p>
+
+            <p>
+                Members:
+                ${club.memberCount}
+            </p>
+
+           <button
+    onclick="editClub(${club.id})"
+    class="btn btn-primary">
+
+    Edit
+
+</button>
+
+
+<button
+    onclick="deleteClub(${club.id})"
+    class="btn btn-danger">
+
+    Delete
+
+</button>
+
+        </div>
+        `;
+
+    });
+
+    document.getElementById(
+        "clubsContainer"
+    ).innerHTML = html;
+
+}
+
+
+async function deleteClub(id) {
+
+    if(!confirm("Delete this club?")){
+        return;
+    }
+
+    await fetch(
+        `http://127.0.0.1:8000/api/admin/clubs/${id}/delete/`,
+        {
+            method:"POST"
+        }
+    );
+
+    alert("Club deleted successfully");
+
+    loadClubs();
+
+}
+
+async function addClub(){
+
+    const club = {
+
+        name: document.getElementById("name").value,
+
+        category: document.getElementById("category").value,
+
+        logo: document.getElementById("logo").value,
+
+        description: document.getElementById("description").value,
+
+        full_description:
+        document.getElementById("full_description").value,
+
+        president:
+        document.getElementById("president").value,
+
+        founded:
+        document.getElementById("founded").value,
+
+        fee:
+        document.getElementById("fee").value,
+
+        requirements: [],
+
+        objectives: []
+
+    };
+
+
+    const response = await fetch(
+        "http://127.0.0.1:8000/api/admin/clubs/",
+        {
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify(club)
+        }
+    );
+
+
+    const data = await response.json();
+
+
+    console.log(data);
+
+
+    alert("Club added successfully");
+
+
+    loadClubs();
+
+}
+
+async function editClub(id){
+
+    const response = await fetch(
+        "http://127.0.0.1:8000/api/admin/clubs/"
+    );
+
+    const clubs = await response.json();
+
+
+    const club = clubs.find(c => c.id === id);
+
+
+    document.getElementById("editForm").style.display="block";
+
+
+    document.getElementById("edit_id").value = club.id;
+
+    document.getElementById("edit_name").value = club.name;
+
+    document.getElementById("edit_category").value = club.category;
+
+    document.getElementById("edit_logo").value = club.logo;
+
+    document.getElementById("edit_description").value = club.description;
+
+    document.getElementById("edit_president").value = club.president;
+
+    document.getElementById("edit_fee").value = club.fee;
+
+}
+
+
+
+async function updateClub(){
+
+    const id =
+    document.getElementById("edit_id").value;
+
+
+    const data={
+
+        name:
+        document.getElementById("edit_name").value,
+
+        category:
+        document.getElementById("edit_category").value,
+
+        logo:
+        document.getElementById("edit_logo").value,
+
+        description:
+        document.getElementById("edit_description").value,
+
+        president:
+        document.getElementById("edit_president").value,
+
+        fee:
+        document.getElementById("edit_fee").value
+
+    };
+
+
+    await fetch(
+        `http://127.0.0.1:8000/api/admin/clubs/${id}/update/`,
+        {
+
+        method:"PUT",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify(data)
+
+        }
+    );
+
+
+    alert("Club updated successfully");
+
+
+    closeEdit();
+
+    loadClubs();
+
+}
+
+
+
+function closeEdit(){
+
+    document.getElementById("editForm").style.display="none";
+
+}
+
+loadClubs();
+
+</script>
+
+</body>
+</html>

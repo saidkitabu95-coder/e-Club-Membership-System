@@ -27,6 +27,7 @@ const AuthManager = {
       return { success: false, message: 'Email already registered' };
     }
 
+
     // Create new student
     const student = {
       fullName: formData.fullName,
@@ -42,15 +43,18 @@ const AuthManager = {
   },
 
   // Login user
-  login(email, password) {
+login(email, password) {
+
     if (!this.isValidEmail(email)) {
       return { success: false, message: 'Invalid email address' };
     }
+
     if (!password) {
       return { success: false, message: 'Password is required' };
     }
 
     const student = StorageManager.getStudent(email);
+
     if (!student) {
       return { success: false, message: 'Email not found' };
     }
@@ -59,25 +63,25 @@ const AuthManager = {
       return { success: false, message: 'Invalid password' };
     }
 
-    StorageManager.setCurrentUser(email);
-    return { success: true, message: 'Login successful!', student };
-  },
+    localStorage.setItem("student", JSON.stringify(student));
 
-  // Logout user
-  logout() {
-    StorageManager.logout();
-    return { success: true, message: 'Logged out successfully' };
-  },
+    return { 
+        success: true, 
+        message: 'Login successful!', 
+        student 
+    };
 
-  // Email validation
-  isValidEmail(email) {
+},  
+
+// Email validation
+isValidEmail(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
-  },
+},
 
   // Simple password hashing (in production, use bcrypt or similar)
   hashPassword(password) {
-    return btoa(password); // Base64 encoding for demo
+    return btoa(password); 
   },
 
   // Verify password
@@ -106,5 +110,27 @@ const AuthManager = {
 
   clearRememberedEmail() {
     localStorage.removeItem('rememberedEmail');
-  }
+  },
+ 
+  // Logout user
+  logout() {
+
+    localStorage.removeItem("student");
+    localStorage.removeItem("currentUser");
+
+}
 };
+
+ function goToDashboard() {
+
+    const student = localStorage.getItem("student");
+
+    if (student !== null) {
+        window.location.href = "dashboard.html";
+    } else {
+        window.location.href = "login.html";
+    }
+
+}
+
+

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Admin Events</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+
+<body>
+
+
+<aside class="sidebar">
+
+<h2>
+E-Club Admin
+</h2>
+
+
+<a href="admin-dashboard.html">
+📊 Dashboard
+</a>
+
+
+<a href="admin-students.html">
+👨‍🎓 Students
+</a>
+
+
+<a href="admin-clubs.html">
+🏛 Clubs
+</a>
+
+
+<a href="admin-applications.html">
+📝 Applications
+</a>
+
+
+<a href="admin-events.html">
+📅 Events
+</a>
+
+
+<a href="admin-announcements.html">
+📢 Announcements
+</a>
+
+
+<a href="#" onclick="logout()">
+🚪 Logout
+</a>
+
+
+</aside>
+
+<script src="js/admin-auth.js"></script>
+
+<script>
+
+
+async function loadEvents(){
+
+
+try{
+
+
+const response = await fetch(
+"http://127.0.0.1:8000/api/events/"
+);
+
+
+
+const events = await response.json();
+
+
+let html = "";
+
+
+
+events.forEach(event => {
+
+
+html += `
+
+
+<div class="card">
+
+
+<h3>
+📅 ${event.title}
+</h3>
+
+
+<p>
+Club:
+${event.club_name || "General"}
+</p>
+
+
+<p>
+Date:
+${event.date}
+</p>
+
+
+<p>
+Time:
+${event.time}
+</p>
+
+
+<p>
+Location:
+${event.location}
+</p>
+
+
+<p>
+${event.description}
+</p>
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+
+document.getElementById(
+"eventsContainer"
+).innerHTML = html;
+
+
+
+}
+
+catch(error){
+
+
+console.log(error);
+
+
+document.getElementById(
+"eventsContainer"
+).innerHTML =
+"Failed to load events";
+
+
+}
+
+
+}
+
+
+
+loadEvents();
+
+
+
+</script>
+
+
+
+</body>
+
+</html>

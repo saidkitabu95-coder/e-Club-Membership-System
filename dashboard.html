@@ -18,25 +18,13 @@
         🎓 E-Club
       </div>
       <button class="menu-toggle">☰</button>
-      <div class="navbar-menu">
-        <a href="index.html">Home</a>
-        <a href="clubs.html">Clubs</a>
-        <a href="events.html">Events</a>
-        <a href="announcements.html">Announcements</a>
-      </div>
-      <div class="navbar-actions">
-        <div id="authLinks" class="flex-gap-md">
-          <a href="login.html" class="btn btn-outline btn-small">Login</a>
-          <a href="register.html" class="btn btn-primary btn-small">Register</a>
-        </div>
+      
+      
         <div id="loggedInLinks" class="flex-gap-md">
           <a href="dashboard.html">Dashboard</a>
           <span style="color: var(--text-secondary);">|</span>
-          <a href="status.html">Status</a>
-          <span style="color: var(--text-secondary);">|</span>
           <button onclick="App.logout()" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-weight: 500;">Logout</button>
         </div>
-        <button class="theme-toggle" id="themeToggle">🌙</button>
       </div>
     </div>
   </nav>
@@ -60,7 +48,7 @@
       <!-- Header -->
       <div class="dashboard-header">
         <h1 id="welcomeMessage">Welcome Back!</h1>
-        <p class="user-info" id="userInfo">Loading...</p>
+        <p class="user-info" id="userInfo"></p>
       </div>
 
       <!-- Statistics -->
@@ -121,210 +109,529 @@
     <div class="spinner"></div>
   </div>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>About</h3>
-          <p>E-Club Membership System helps students discover and join clubs that match their interests and passions.</p>
-        </div>
-        <div class="footer-section">
-          <h3>Quick Links</h3>
-          <a href="clubs.html">Clubs</a>
-          <a href="events.html">Events</a>
-          <a href="announcements.html">Announcements</a>
-          <a href="register.html">Register</a>
-        </div>
-        <div class="footer-section">
-          <h3>Support</h3>
-          <a href="#">Contact Us</a>
-          <a href="#">FAQ</a>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-        </div>
-        <div class="footer-section">
-          <h3>Connect</h3>
-          <a href="#">Facebook</a>
-          <a href="#">Twitter</a>
-          <a href="#">Instagram</a>
-          <a href="#">LinkedIn</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>Copyright @2026 e-Club Membership System. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
+  
 
-  <script src="js/storage.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/clubs.js"></script>
-  <script src="js/dashboard.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/application.js"></script>
+
+ <script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
+  
 
   <script>
     // Load dashboard data
     function loadDashboard() {
-      const user = AuthManager.getCurrentUser();
-      if (!user) return;
+    const student = JSON.parse(localStorage.getItem("student"));
+
+      if (!student) {
+       window.location.href = "login.html";
+       return;
+      }
 
       // Update welcome message
-      document.getElementById('welcomeMessage').textContent = `Welcome back, ${user.fullName}!`;
+      document.getElementById('welcomeMessage').textContent = `Welcome back, ${student.full_name}!`;
       const userInfo = document.getElementById('userInfo');
-      if (userInfo) {
-        userInfo.textContent = '';
-        userInfo.style.display = 'none';
+
+      if(userInfo){
+      userInfo.innerHTML = "";
       }
 
-      // Load statistics
-      loadStatistics(user.id);
+     // Load statistics
+     loadStatistics();
 
-      // Load my clubs
-      loadMyClubs(user.id);
+document.getElementById("myClubsContainer").innerHTML = `
+<div class="empty-state">
+    <div class="empty-state-icon">📭</div>
+    <p>No club applications yet.</p>
+</div>
+`;
 
-      // Load announcements
-      loadAnnouncements();
+document.getElementById("announcementsContainer").innerHTML = `
+<p>No announcements yet.</p>
+`;
 
-      // Load upcoming events
-      loadUpcomingEvents(user.id);
+document.getElementById("upcomingEventsContainer").innerHTML = `
+<p>No upcoming events.</p>
+`;
+
     }
+
+
+
 
     // Load statistics
-    function loadStatistics(userId) {
-      const stats = DashboardManager.getStatistics(userId);
-      const container = document.getElementById('statsContainer');
+   
+ async function loadStatistics(){
 
-      container.innerHTML = `
-        <div class="stat-card">
-          <div class="stat-icon">🏛️</div>
-          <div class="stat-value">${stats.totalClubs}</div>
-          <div class="stat-label">Total Clubs</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">📝</div>
-          <div class="stat-value">${stats.appliedClubs}</div>
-          <div class="stat-label">Applied Clubs</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">✅</div>
-          <div class="stat-value">${stats.approvedClubs}</div>
-          <div class="stat-label">Member Clubs</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">⏳</div>
-          <div class="stat-value">${stats.pendingClubs}</div>
-          <div class="stat-label">Pending</div>
-        </div>
-      `;
-    }
+const student = JSON.parse(localStorage.getItem("student"));
 
+
+if(!student){
+    return;
+}
+
+
+try {
+
+
+const clubsResponse = await fetch("http://127.0.0.1:8000/api/clubs/");
+
+
+const clubs = await clubsResponse.json();
+
+
+
+const appResponse = await fetch(
+`http://127.0.0.1:8000/api/my-applications/?student_id=${student.id}`
+);
+
+
+const applications = await appResponse.json();
+
+
+
+const pending = applications.filter(
+app => app.status === "Pending"
+).length;
+
+
+
+const approved = applications.filter(
+app => app.status === "Approved"
+).length;
+
+
+
+document.getElementById("statsContainer").innerHTML = `
+
+
+<div class="stat-card">
+
+<div class="stat-icon">🏛️</div>
+
+<div class="stat-value">
+${clubs.length}
+</div>
+
+<div class="stat-label">
+Available Clubs
+</div>
+
+</div>
+
+
+
+<div class="stat-card">
+
+<div class="stat-icon">📝</div>
+
+<div class="stat-value">
+${applications.length}
+</div>
+
+<div class="stat-label">
+Applications
+</div>
+
+</div>
+
+
+
+<div class="stat-card">
+
+<div class="stat-icon">✅</div>
+
+<div class="stat-value">
+${approved}
+</div>
+
+<div class="stat-label">
+Approved Clubs
+</div>
+
+</div>
+
+
+
+<div class="stat-card">
+
+<div class="stat-icon">⏳</div>
+
+<div class="stat-value">
+${pending}
+</div>
+
+<div class="stat-label">
+Pending
+</div>
+
+</div>
+
+
+`;
+
+
+}
+catch(error){
+
+console.log(error);
+
+}
+
+
+}
     // Load my clubs
-    function loadMyClubs(userId) {
-      const apps = StorageManager.getStudentApplications(userId);
-      const container = document.getElementById('myClubsContainer');
+  
+    async function loadMyClubs(){
 
-      if (apps.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">📭</div>
-            <p>You haven't applied to any clubs yet</p>
-            <a href="apply.html" class="btn btn-primary btn-small">Apply Now</a>
-          </div>
-        `;
-        return;
-      }
+const student = JSON.parse(localStorage.getItem("student"));
 
-      const html = apps.map(app => {
-        const club = StorageManager.getClubById(app.clubId);
-        const statusClass = `status-badge status-${app.status}`;
-        
-        return `
-          <div class="club-item">
-            <div class="club-info">
-              <div class="club-name">${club.name}</div>
-              <div class="club-status">Applied on ${DashboardManager.formatDate(app.appliedAt)}</div>
-            </div>
-            <div class="club-action">
-              <span class="${statusClass}">${app.status.charAt(0).toUpperCase() + app.status.slice(1)}</span>
-            </div>
-          </div>
-        `;
-      }).join('');
+if(!student){
+    return;
+}
 
-      container.innerHTML = html;
-    }
 
+try{
+
+
+const response = await fetch(
+`http://127.0.0.1:8000/api/my-applications/?student_id=${student.id}`
+);
+
+
+const applications = await response.json();
+
+
+
+const container = document.getElementById(
+"myClubsContainer"
+);
+
+
+
+if(applications.length === 0){
+
+container.innerHTML = `
+
+<div class="empty-state">
+
+<div class="empty-state-icon">
+📭
+</div>
+
+<p>You haven't applied to any clubs yet</p>
+
+<a href="clubs.html" class="btn btn-primary btn-small">
+Apply Now
+</a>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+
+container.innerHTML = applications.map(app => `
+
+
+<div class="club-item">
+
+
+<div class="club-info">
+
+
+<div class="club-name">
+
+${app.club_name}
+
+</div>
+
+
+<div class="club-status">
+
+Applied on ${new Date(app.applied_at).toLocaleDateString()}
+
+</div>
+
+
+</div>
+
+
+
+<div class="club-action">
+
+
+<span class="status-badge">
+
+${app.status}
+
+</span>
+
+
+</div>
+
+
+
+</div>
+
+
+`).join("");
+
+
+
+}
+
+catch(error){
+
+console.log(error);
+
+}
+
+}
     // Load announcements
-    function loadAnnouncements() {
-      const announcements = DashboardManager.getRecentAnnouncements(3);
-      const container = document.getElementById('announcementsContainer');
+    async function loadAnnouncements(){
 
-      if (announcements.length === 0) {
-        container.innerHTML = '<p class="text-secondary">No announcements yet</p>';
-        return;
-      }
+   const container = document.getElementById("announcementsContainer");
 
-      const html = announcements.map(ann => `
-        <div class="announcement-item">
-          <div class="announcement-header">
-            <div>
-              <div class="announcement-club">${ann.clubLogo} ${ann.clubName}</div>
-              <div class="announcement-title">${ann.title}</div>
-            </div>
-            <div class="announcement-date">${DashboardManager.getRelativeTime(ann.date)}</div>
-          </div>
-          <div class="announcement-content">${ann.content}</div>
-        </div>
-      `).join('');
 
-      container.innerHTML = html;
-    }
+try{
+
+
+const response = await fetch("http://127.0.0.1:8000/api/announcements/");
+
+
+const announcements = await response.json();
+
+
+
+if(announcements.length === 0){
+
+container.innerHTML = `
+<p class="text-secondary">
+No announcements yet
+</p>
+`;
+
+return;
+
+}
+
+
+
+container.innerHTML = announcements.slice(0,3).map(ann => `
+
+
+<div class="announcement-item">
+
+
+<div class="announcement-header">
+
+
+<div>
+
+
+<div class="announcement-title">
+
+${ann.title}
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+<div class="announcement-content">
+
+${ann.message}
+
+</div>
+
+
+
+</div>
+
+
+`).join("");
+
+
+
+}
+
+catch(error){
+
+console.log(error);
+
+container.innerHTML = `
+<p>
+Failed to load announcements
+</p>
+`;
+
+}
+
+
+}
+
+      
 
     // Load upcoming events
-    function loadUpcomingEvents(userId) {
-      const events = DashboardManager.getUpcomingEventsForStudentClubs(userId, 3);
-      const container = document.getElementById('upcomingEventsContainer');
+    async function loadUpcomingEvents(){
 
-      if (events.length === 0) {
-        container.innerHTML = `
-          <p class="text-secondary">No upcoming events from your clubs yet</p>
-        `;
-        return;
-      }
+const student = JSON.parse(localStorage.getItem("student"));
 
-      const html = events.map(event => {
-        const eventDate = new Date(event.date);
-        const day = eventDate.getDate();
-        const month = eventDate.toLocaleString('en-US', { month: 'short' });
 
-        return `
-          <div class="event-item">
-            <div class="event-date-box">
-              <div class="event-day">${day}</div>
-              <div class="event-month">${month}</div>
+if(!student){
+    return;
+}
+
+
+try{
+
+
+const appResponse = await fetch(`http://127.0.0.1:8000/api/my-applications/?student_id=${student.id}`);
+
+
+const applications = await appResponse.json();
+
+
+
+const eventResponse = await fetch("http://127.0.0.1:8000/api/events/");
+
+
+const events = await eventResponse.json();
+
+
+
+
+
+const clubIds = applications.map(
+app => app.club
+);
+
+
+
+
+
+const myEvents = events.filter(event =>
+clubIds.includes(event.club)
+);
+
+
+
+const container = document.getElementById(
+"upcomingEventsContainer"
+);
+
+
+
+if(myEvents.length === 0){
+
+container.innerHTML = `
+
+<p class="text-secondary">
+No upcoming events from your clubs yet
+</p>
+
+`;
+
+return;
+
+}
+
+
+
+container.innerHTML = myEvents.map(event => `
+
+<div class="event-item">
+
+    <div class="event-date-box">
+
+        <div class="event-day">
+            ${new Date(event.event_date).getDate()}
+        </div>
+
+        <div class="event-month">
+            ${new Date(event.event_date)
+            .toLocaleString('en-US',{month:'short'})}
+        </div>
+
+    </div>
+
+
+    <div class="event-info">
+
+        <div class="event-title">
+            📅 ${event.title}
+        </div>
+
+
+        <div class="event-details">
+
+            <div class="event-detail">
+                ⏰ ${event.event_time}
             </div>
-            <div class="event-info">
-              <div class="event-title">${event.clubLogo} ${event.title}</div>
-              <div class="event-details">
-                <div class="event-detail">
-                  🕐 ${event.time}
-                </div>
-                <div class="event-detail">
-                  📍 ${event.venue}
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
 
-      container.innerHTML = html;
-    }
+
+            <div class="event-detail">
+                📍 ${event.venue}
+            </div>
+
+
+        </div>
+
+
+        <div class="event-description">
+            ${event.description}
+        </div>
+
+
+    </div>
+
+
+</div>
+
+`).join("");
+
+
+
+}
+
+catch(error){
+
+console.log(error);
+
+
+document.getElementById(
+"upcomingEventsContainer"
+).innerHTML = `
+
+<p>
+Failed to load events
+</p>
+
+`;
+
+}
+
+
+} 
 
     // Initialize
-    document.addEventListener('DOMContentLoaded', loadDashboard);
+    document.addEventListener('DOMContentLoaded', () => {
+    loadDashboard();
+    loadMyClubs();
+    loadAnnouncements();
+    loadUpcomingEvents();
+
+    });
   </script>
 </body>
 </html>

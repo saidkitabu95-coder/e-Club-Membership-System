@@ -6,9 +6,9 @@
 /* ========== CSS Variables ========== */
 :root {
   /* Colors */
-  --primary-color: #3366cc;
-  --primary-dark: #2953a5;
-  --primary-light: #5588dd;
+  --primary-color: #2f6fdb;
+  --primary-dark: #2154a8;
+  --primary-light: #6fa8ff;
   --secondary-color: #ff6b6b;
   --success-color: #51cf66;
   --warning-color: #ffd43b;
@@ -16,9 +16,9 @@
   --info-color: #74c0fc;
 
   /* Backgrounds & Text */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f5f7fa;
-  --bg-tertiary: #eeeeee;
+  --bg-primary: #f4faff;
+  --bg-secondary: #e9f5ff;
+  --bg-tertiary: #dceeff;
   --text-primary: #1a1a1a;
   --text-secondary: #666666;
   --text-light: #999999;
@@ -85,7 +85,8 @@ body {
   font-size: var(--font-size-base);
   line-height: 1.6;
   color: var(--text-primary);
-  background-color: var(--bg-primary);
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eef7ff 0%, #dceeff 100%);
   transition: background-color var(--transition-base), color var(--transition-base);
 }
 

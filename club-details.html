@@ -17,27 +17,9 @@
         🎓 E-Club
       </div>
       <button class="menu-toggle">☰</button>
-      <div class="navbar-menu">
-        <a href="index.html">Home</a>
-        <a href="clubs.html">Clubs</a>
-        <a href="events.html">Events</a>
-        <a href="announcements.html">Announcements</a>
-      </div>
-      <div class="navbar-actions">
-        <div id="authLinks" class="flex-gap-md">
-          <a href="login.html" class="btn btn-outline btn-small">Login</a>
-          <a href="register.html" class="btn btn-primary btn-small">Register</a>
-        </div>
-        <div id="loggedInLinks" class="flex-gap-md">
-          <a href="dashboard.html">Dashboard</a>
-          <span style="color: var(--text-secondary);">|</span>
-          <a href="status.html">Status</a>
-          <span style="color: var(--text-secondary);">|</span>
-          <button onclick="App.logout()" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-weight: 500;">Logout</button>
-        </div>
-        <button class="theme-toggle" id="themeToggle">🌙</button>
-      </div>
-    </div>
+      
+      
+    </div>    
   </nav>
 
   <!-- Club Details Section -->
@@ -51,41 +33,7 @@
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>About</h3>
-          <p>E-Club Membership System helps students discover and join clubs that match their interests and passions.</p>
-        </div>
-        <div class="footer-section">
-          <h3>Quick Links</h3>
-          <a href="clubs.html">Clubs</a>
-          <a href="events.html">Events</a>
-          <a href="announcements.html">Announcements</a>
-          <a href="register.html">Register</a>
-        </div>
-        <div class="footer-section">
-          <h3>Support</h3>
-          <a href="#">Contact Us</a>
-          <a href="#">FAQ</a>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-        </div>
-        <div class="footer-section">
-          <h3>Connect</h3>
-          <a href="#">Facebook</a>
-          <a href="#">Twitter</a>
-          <a href="#">Instagram</a>
-          <a href="#">LinkedIn</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>Copyright @2026 e-Club Membership System. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
+  
 
   <script src="js/storage.js"></script>
   <script src="js/auth.js"></script>
@@ -100,142 +48,349 @@
     }
 
     // Load club details
-    function loadClubDetails() {
-      const clubId = getClubIdFromUrl();
-      const club = ClubsManager.getClubById(clubId);
+    async function loadClubDetails() {
 
-      if (!club) {
+    try {
+         const clubId = Number(getClubIdFromUrl());
+
+        const response = await fetch(`http://127.0.0.1:8000/api/clubs/`);
+
+        const clubs = await response.json();
+
+        const club = clubs.find(c => c.id === clubId);
+
+       if (!club) {
         document.getElementById('clubDetailsContainer').innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">❌</div>
-            <p>Club not found</p>
-            <a href="clubs.html" class="btn btn-primary btn-small">Back to Clubs</a>
-          </div>
+            <div class="empty-state">
+                <div class="empty-state-icon">❌</div>
+                <p>Club not found</p>
+                <a href="clubs.html" class="btn btn-primary btn-small">Back to Clubs</a>
+            </div>
         `;
         return;
-      }
-
-      const events = ClubsManager.getClubEvents(clubId);
-      const announcements = ClubsManager.getClubAnnouncements(clubId);
-      const isLoggedIn = AuthManager.isAuthenticated();
-      let actionButton = '';
-
-      if (isLoggedIn) {
-        const user = AuthManager.getCurrentUser();
-        const status = ClubsManager.getApplicationStatus(user.id, clubId);
-        
-        if (status === 'approved') {
-          actionButton = '<button class="btn btn-success" disabled>✓ Member</button>';
-        } else if (status === 'pending') {
-          actionButton = '<button class="btn btn-warning" disabled>⏳ Application Pending</button>';
-        } else if (status === 'rejected') {
-          actionButton = `<a href="apply.html?id=${clubId}" class="btn btn-primary">Reapply</a>`;
-        } else {
-          actionButton = `<a href="apply.html?id=${clubId}" class="btn btn-primary">Apply Now</a>`;
-        }
-      } else {
-        actionButton = '<a href="login.html" class="btn btn-primary">Login to Apply</a>';
-      }
-
-      const html = `
-        <div class="grid grid-2" style="gap: var(--spacing-xl); margin-bottom: var(--spacing-xl);">
-          <div>
-            <div style="background: var(--bg-secondary); padding: 40px; border-radius: var(--radius-lg); text-align: center; margin-bottom: var(--spacing-lg);">
-              <div style="font-size: 5rem; margin-bottom: var(--spacing-md);">${club.logo}</div>
-              <h1 style="margin-bottom: var(--spacing-sm);">${club.name}</h1>
-              <span class="badge badge-primary">${club.category}</span>
-            </div>
-
-            <div class="card">
-              <h3>Quick Info</h3>
-              <div style="display: grid; gap: var(--spacing-md);">
-                <div>
-                  <strong>Members:</strong> ${club.memberCount}
-                </div>
-                <div>
-                  <strong>Founded:</strong> ${club.founded}
-                </div>
-                <div>
-                  <strong>President:</strong> ${club.president}
-                </div>
-                <div>
-                  <strong>Membership Fee:</strong> ${club.fee}
-                </div>
-              </div>
-            </div>
-
-            <div class="card" style="margin-top: var(--spacing-lg);">
-              ${actionButton}
-            </div>
-          </div>
-
-          <div>
-            <div class="card mb-3">
-              <h3>About</h3>
-              <p>${club.fullDescription}</p>
-            </div>
-
-            <div class="card mb-3">
-              <h3>Membership Requirements</h3>
-              <p>${club.requirements}</p>
-            </div>
-
-            <div class="card">
-              <h3>Objectives</h3>
-              <ul style="margin-left: var(--spacing-lg);">
-                ${club.objectives.map(obj => `<li style="margin-bottom: var(--spacing-sm);">${obj}</li>`).join('')}
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Events Section -->
-        <div class="card mb-3">
-          <h3>Upcoming Events</h3>
-          ${events.length > 0 ? `
-            <div class="flex-column flex-gap-md">
-              ${events.map(event => `
-                <div style="border-left: 4px solid var(--primary-color); padding-left: var(--spacing-md);">
-                  <strong>${event.title}</strong>
-                  <div style="color: var(--text-secondary); font-size: var(--font-size-sm); margin-top: var(--spacing-xs);">
-                    📅 ${App.formatDate(event.date)} at ${event.time}<br>
-                    📍 ${event.venue}
-                  </div>
-                  <p style="margin-top: var(--spacing-sm);">${event.description}</p>
-                </div>
-              `).join('')}
-            </div>
-          ` : `
-            <p class="text-secondary">No upcoming events</p>
-          `}
-        </div>
-
-        <!-- Announcements Section -->
-        <div class="card">
-          <h3>Recent Announcements</h3>
-          ${announcements.length > 0 ? `
-            <div class="flex-column flex-gap-md">
-              ${announcements.slice(0, 3).map(ann => `
-                <div style="border-left: 4px solid var(--primary-color); padding-left: var(--spacing-md);">
-                  <strong>${ann.title}</strong>
-                  <div style="color: var(--text-secondary); font-size: var(--font-size-sm); margin-top: var(--spacing-xs);">
-                    ${App.formatDate(ann.date)}
-                  </div>
-                  <p style="margin-top: var(--spacing-sm);">${ann.content}</p>
-                </div>
-              `).join('')}
-            </div>
-          ` : `
-            <p class="text-secondary">No announcements yet</p>
-          `}
-        </div>
-      `;
-
-      document.getElementById('clubDetailsContainer').innerHTML = html;
     }
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', loadClubDetails);
-  </script>
+     const eventResponse = await fetch("http://127.0.0.1:8000/api/events/");
+
+     const allEvents = await eventResponse.json();
+     const events = allEvents.filter(e => e.club === clubId);
+     const annResponse = await fetch("http://127.0.0.1:8000/api/announcements/");
+
+     const allAnnouncements = await annResponse.json();
+
+     const announcements = allAnnouncements.filter(a => a.club === clubId);
+     const isLoggedIn = localStorage.getItem("student") !== null;
+     let actionButton = '';
+
+    if (isLoggedIn) {
+
+    const user = JSON.parse(localStorage.getItem("student"));
+
+    if (user) {
+
+        const appResponse = await fetch(
+            `http://127.0.0.1:8000/api/my-applications/?student_id=${user.id}`
+        );
+
+        const applications = await appResponse.json();
+      const application = applications.find(app => app.club === clubId);
+
+
+        if (application) {
+
+            if (application.status === "Approved") {
+
+                actionButton =
+                '<button class="btn btn-success" disabled>✓ Member</button>';
+
+            } 
+            else if (application.status === "Pending") {
+
+                actionButton =
+                '<button class="btn btn-warning" disabled>⏳ Application Pending</button>';
+
+            } 
+            else {
+
+                actionButton =
+                `<button class="btn btn-primary" onclick="applyClub(${clubId})">
+                    Reapply
+                </button>`;
+
+            }
+
+
+        } else {
+
+            actionButton =
+            `<button class="btn btn-primary" onclick="applyClub(${clubId})">
+                Apply Now
+            </button>`;
+
+        }
+
+    }
+
+} else {
+
+    actionButton =
+    `<a href="login.html" class="btn btn-primary">
+        Login to Apply
+     </a>`;
+
+}
+    
+const html = `
+
+<div class="grid grid-2" style="gap: var(--spacing-xl);">
+
+<div>
+
+<div class="card">
+
+<div style="font-size:5rem;text-align:center;">
+${club.logo}
+</div>
+
+<h1>${club.name}</h1>
+
+<span class="badge badge-primary">
+${club.category}
+</span>
+
+</div>
+
+
+<div class="card">
+
+<h3>Quick Info</h3>
+
+<p>
+<strong>Members:</strong>
+${club.memberCount}
+</p>
+
+<p>
+<strong>Founded:</strong>
+${club.founded}
+</p>
+
+<p>
+<strong>President:</strong>
+${club.president}
+</p>
+
+<p>
+<strong>Fee:</strong>
+${club.fee}
+</p>
+
+</div>
+
+
+<div class="card">
+
+${actionButton}
+
+</div>
+
+
+</div>
+
+
+<div>
+
+<div class="card">
+
+<h3>About</h3>
+
+<p>
+${club.full_description}
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>Requirements</h3>
+
+<p>
+${club.requirements}
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>Objectives</h3>
+
+<ul>
+
+${
+club.objectives 
+?
+club.objectives.map(obj => `
+<li>${obj}</li>
+`).join("")
+:
+"<li>No objectives available</li>"
+}
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>Upcoming Events</h3>
+
+${
+events.length > 0 ?
+
+events.map(event => `
+
+<div>
+
+<h4>${event.title}</h4>
+
+<p>
+📅 ${event.event_date}
+<br>
+📍 ${event.venue}
+</p>
+
+<p>
+${event.description}
+</p>
+
+</div>
+
+`).join("")
+
+:
+
+"<p>No upcoming events</p>"
+
+}
+
+</div>
+
+
+
+<div class="card">
+
+<h3>Announcements</h3>
+
+
+${
+announcements.length > 0 ?
+
+announcements.map(ann => `
+
+<div>
+
+<h4>${ann.title}</h4>
+
+<p>
+${ann.message}
+</p>
+
+</div>
+
+`).join("")
+
+:
+
+"<p>No announcements</p>"
+
+}
+
+</div>
+
+`;
+
+// Display club details
+document.getElementById(
+"clubDetailsContainer"
+).innerHTML = html;
+ 
+}
+catch(error){
+
+console.error("Error:", error);
+document.getElementById(
+"clubDetailsContainer"
+).innerHTML = `
+<div class="empty-state">
+<h3>Failed to load club details</h3>
+<p>${error.message}</p>
+</div>
+`;
+
+}
+}
+
+async function applyClub(clubId) {
+
+    const user = JSON.parse(localStorage.getItem("student"));
+
+    if (!user) {
+        alert("Please login first.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    try {
+
+        const response = await fetch("http://127.0.0.1:8000/api/apply/", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                student_id: user.id,
+                club_id: clubId
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+
+            alert(data.message);
+
+            location.reload();
+
+        } else {
+
+            alert(data.message);
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Failed to apply.");
+
+    }
+
+}
+// Initialize
+document.addEventListener("DOMContentLoaded", loadClubDetails);
+
+</script>
 </body>
 </html>

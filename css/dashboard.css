@@ -9,21 +9,27 @@
   gap: var(--spacing-lg);
   min-height: calc(100vh - 70px);
   padding: var(--spacing-lg);
+  margin: 0;
+  background: linear-gradient(135deg, #dceeff 0%, #8fc0ff 100%);
+  border-radius: 0;
 }
 
 .dashboard-sidebar {
-  background-color: var(--bg-secondary);
+  background: linear-gradient(135deg, #2f6fdb 0%, #1e5ac0 100%);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   height: fit-content;
+  min-height: calc(100vh - 110px);
   position: sticky;
   top: 80px;
+  color: white;
 }
 
 .dashboard-main {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+  min-height: 100%;
 }
 
 .dashboard-header {
@@ -58,7 +64,7 @@
 .sidebar-nav a {
   padding: var(--spacing-md);
   border-radius: var(--radius-md);
-  color: var(--text-primary);
+  color: white;
   transition: all var(--transition-fast);
   display: flex;
   align-items: center;
@@ -68,7 +74,7 @@
 
 .sidebar-nav a:hover,
 .sidebar-nav a.active {
-  background-color: var(--primary-color);
+  background-color: rgba(255, 255, 255, 0.2);
   color: white;
 }
 
@@ -321,6 +327,13 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+}
+
+.event-description {
+  margin-top: var(--spacing-sm);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
 }
 
 /* ========== Empty State ========== */

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Admin Students</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin-dashboard.css">
+
+</head>
+
+
+<body>
+
+
+<aside class="sidebar">
+
+<h2>
+E-Club Admin
+</h2>
+
+
+<a href="admin-dashboard.html">
+📊 Dashboard
+</a>
+
+
+<a href="admin-students.html">
+👨‍🎓 Students
+</a>
+
+
+<a href="admin-clubs.html">
+🏛 Clubs
+</a>
+
+
+<a href="admin-applications.html">
+📝 Applications
+</a>
+
+
+<a href="admin-events.html">
+📅 Events
+</a>
+
+
+<a href="admin-announcements.html">
+📢 Announcements
+</a>
+
+
+<a href="#" onclick="logout()">
+🚪 Logout
+</a>
+
+
+</aside>
+
+<script src="js/admin-auth.js"></script>
+
+<script>
+
+
+async function loadStudents(){
+
+
+try{
+
+
+const response = await fetch(
+"http://127.0.0.1:8000/api/students/"
+);
+
+
+
+const students = await response.json();
+
+
+
+let html="";
+
+
+
+students.forEach(student=>{
+
+
+
+
+
+html += `
+
+<div class="card">
+
+<h3>👨‍🎓 ${student.full_name}</h3>
+
+<p>
+📧 Email: ${student.email}
+</p>
+
+<p>
+📚 Year: ${student.year_of_study}
+</p>
+
+</div>
+
+`;
+
+
+});
+
+
+
+document.getElementById(
+"studentsContainer"
+).innerHTML = html;
+
+
+
+}
+
+catch(error){
+
+
+console.log(error);
+
+
+document.getElementById(
+"studentsContainer"
+).innerHTML =
+"Failed to load students";
+
+
+}
+
+
+
+}
+
+
+
+loadStudents();
+
+
+</script>
+
+
+</body>
+</html>

@@ -16,28 +16,7 @@
       <div class="navbar-brand">
         🎓 E-Club
       </div>
-      <button class="menu-toggle">☰</button>
-      <div class="navbar-menu">
-        <a href="index.html">Home</a>
-        <a href="clubs.html">Clubs</a>
-        <a href="events.html">Events</a>
-        <a href="announcements.html">Announcements</a>
-      </div>
-      <div class="navbar-actions">
-        <div id="authLinks" class="flex-gap-md">
-          <a href="login.html" class="btn btn-outline btn-small">Login</a>
-          <a href="register.html" class="btn btn-primary btn-small">Register</a>
-        </div>
-        <div id="loggedInLinks" class="flex-gap-md">
-          <a href="dashboard.html">Dashboard</a>
-          <span style="color: var(--text-secondary);">|</span>
-          <a href="status.html">Status</a>
-          <span style="color: var(--text-secondary);">|</span>
-          <button onclick="App.logout()" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-weight: 500;">Logout</button>
-        </div>
-        <button class="theme-toggle" id="themeToggle">🌙</button>
-      </div>
-    </div>
+     
   </nav>
 
   <!-- Registration Section -->
@@ -107,42 +86,6 @@
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>About</h3>
-          <p>E-Club Membership System helps students discover and join clubs that match their interests and passions.</p>
-        </div>
-        <div class="footer-section">
-          <h3>Quick Links</h3>
-          <a href="clubs.html">Clubs</a>
-          <a href="events.html">Events</a>
-          <a href="announcements.html">Announcements</a>
-          <a href="register.html">Register</a>
-        </div>
-        <div class="footer-section">
-          <h3>Support</h3>
-          <a href="#">Contact Us</a>
-          <a href="#">FAQ</a>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-        </div>
-        <div class="footer-section">
-          <h3>Connect</h3>
-          <a href="#">Facebook</a>
-          <a href="#">Twitter</a>
-          <a href="#">Instagram</a>
-          <a href="#">LinkedIn</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>Copyright @2026 e-Club Membership System. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
-
   <script src="js/storage.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/app.js"></script>
@@ -191,16 +134,52 @@
         return;
       }
 
-      const result = AuthManager.register(formData);
-
-      if (result.success) {
-        App.showNotification(result.message, 'success');
-        setTimeout(() => {
-          window.location.href = 'login.html';
-        }, 1500);
-      } else {
-        App.showNotification(result.message, 'error');
+      if (formData.password !== formData.confirmPassword) {
+        showError("confirmPassword", "Passwords do not match");
+        return;
       }
+
+      if (formData.password.length < 6) {
+       showError("password", "Password must be at least 6 characters");
+       return;
+       }    
+
+  
+ fetch("http://127.0.0.1:8000/api/register/", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    fullName: formData.fullName,
+    email: formData.email,
+    password: formData.password,
+    year: formData.year
+  })
+})
+.then(async response => {
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw data;
+  }
+
+  return data;
+})
+.then(data => {
+  App.showNotification(data.message, "success");
+
+  setTimeout(() => {
+    window.location.href = "login.html";
+  }, 1500);
+})
+.catch(error => {
+  console.error(error);
+
+  App.showNotification(
+    error.message || "Registration failed",
+    "error"
+  );});
     });
   </script>
 </body>

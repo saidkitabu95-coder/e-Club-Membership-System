@@ -54,6 +54,11 @@ const StorageManager = {
     return this.getStudents().find(s => s.id == userId);
   },
 
+  getLoggedInStudent() {
+    const student = localStorage.getItem('student');
+    return student ? JSON.parse(student) : null;
+},
+
   setCurrentUser(email) {
     const student = this.getStudent(email);
     if (student) {
@@ -64,12 +69,14 @@ const StorageManager = {
   },
 
   logout() {
+    localStorage.removeItem('student');
     localStorage.removeItem('currentUser');
-  },
+     window.location.href = "login.html";
+},
 
   isLoggedIn() {
-    return !!localStorage.getItem('currentUser');
-  },
+    return localStorage.getItem('student') !== null;
+},
 
   // Clubs Methods
   getClubs() {
@@ -178,9 +185,9 @@ const StorageManager = {
         ],
         requirements: 'Any student interested in Python programming',
         fee: 'Free',
-        memberCount: 245,
-        founded: '2021',
-        president: 'Ahmed Hassan'
+        memberCount: 0,
+        founded: '',
+        president: ''
       },
       {
         id: 2,
@@ -198,9 +205,9 @@ const StorageManager = {
         ],
         requirements: 'Basic understanding of IT concepts preferred',
         fee: 'Free',
-        memberCount: 189,
-        founded: '2022',
-        president: 'Sarah Johnson'
+        memberCount: 0,
+        founded: '',
+        president: ''
       },
       {
         id: 3,
@@ -218,9 +225,9 @@ const StorageManager = {
         ],
         requirements: 'Interest in geography and mapping',
         fee: 'Free',
-        memberCount: 124,
-        founded: '2020',
-        president: 'Emma Davis'
+        memberCount: 0,
+        founded: '',
+        president: ''
       },
       {
         id: 4,
@@ -238,104 +245,23 @@ const StorageManager = {
         ],
         requirements: 'Passion for creative arts and media',
         fee: 'Free',
-        memberCount: 178,
-        founded: '2019',
-        president: 'Michael Chen'
+        memberCount: 0,
+        founded: '',
+        president: ''
       }
     ];
   },
 
   getDefaultEvents() {
-    return [
-      {
-        id: 1,
-        clubId: 1,
-        title: 'Python Workshop: Web Development with Django',
-        date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-        venue: 'Tech Lab, Building A',
-        time: '14:00',
-        description: 'Learn Django framework for building robust web applications',
-        speaker: 'Dr. Ravi Kumar'
+    return [];
+       
       },
-      {
-        id: 2,
-        clubId: 1,
-        title: 'Coding Competition: Python Challenge 2024',
-        date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-        venue: 'Main Auditorium',
-        time: '10:00',
-        description: 'Compete with peers in solving challenging Python problems',
-        speaker: 'Club Management'
-      },
-      {
-        id: 3,
-        clubId: 2,
-        title: 'Cybersecurity Seminar: Social Engineering Awareness',
-        date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
-        venue: 'Conference Room 3',
-        time: '15:30',
-        description: 'Understand social engineering tactics and defense strategies',
-        speaker: 'Dr. Lisa Anderson'
-      },
-      {
-        id: 4,
-        clubId: 3,
-        title: 'GIS Practical Session: Remote Sensing Analysis',
-        date: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
-        venue: 'GIS Lab',
-        time: '13:00',
-        description: 'Practical training on satellite imagery analysis using QGIS',
-        speaker: 'Prof. Michael White'
-      },
-      {
-        id: 5,
-        clubId: 4,
-        title: 'Video Production Workshop: Filmmaking Basics',
-        date: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000).toISOString(),
-        venue: 'Media Studio',
-        time: '16:00',
-        description: 'Learn cinematography, editing, and video production fundamentals',
-        speaker: 'James Wilson'
-      }
-    ];
-  },
+
 
   getDefaultAnnouncements() {
-    return [
-      {
-        id: 1,
-        clubId: 1,
-        title: 'New Python 3.12 Features Discussion',
-        content: 'Join us for an in-depth discussion on the latest features in Python 3.12 including PEP 701 and performance improvements.',
-        date: new Date().toISOString(),
-        priority: 'high'
-      },
-      {
-        id: 2,
-        clubId: 2,
-        title: 'Cybersecurity Certification Path',
-        content: 'We are organizing a certification training program. Interested members can register at the club office.',
-        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-        priority: 'medium'
-      },
-      {
-        id: 3,
-        clubId: 3,
-        title: 'GIS Project Competition 2024',
-        content: 'Announce the GIS Project Competition with exciting prizes. Submissions deadline is 30 days from now.',
-        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        priority: 'high'
-      },
-      {
-        id: 4,
-        clubId: 4,
-        title: 'Adobe Creative Cloud Workshop',
-        content: 'Free workshop on Adobe Photoshop, Premiere Pro, and After Effects for all members.',
-        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-        priority: 'medium'
-      }
-    ];
+    return [];
   }
+
 };
 
 // Initialize storage when module loads

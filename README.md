@@ -1,295 +1,190 @@
 # E-Club Membership System
 
-A modern, responsive web application for managing university student clubs built with vanilla HTML, CSS, and JavaScript.
+A university club management project with a static frontend and a Django REST backend.
 
-## 📋 Project Structure
+## System Overview
+
+This repository contains:
+- A vanilla JavaScript frontend with HTML pages and CSS styles
+- A Django backend API in `e_club_membership_system/`
+- Data models for students, clubs, applications, events, and announcements
+- Client-side localStorage usage for session state, theme, and fallback data
+
+## Project Structure
 
 ```
-e-Club/
-├── index.html                 # Home page with featured clubs
-├── clubs.html                 # Browse all clubs with search/filter
-├── club-details.html          # Detailed club information
-├── register.html              # Student registration form
-├── login.html                 # Student login
-├── dashboard.html             # Student dashboard (protected)
-├── apply.html                 # Apply for club membership (protected)
-├── status.html                # View application status (protected)
-├── events.html                # Browse upcoming events
-├── announcements.html         # View club announcements
-├── admin.html                 # Admin dashboard (UI template)
-│
+E-Club-Membership-System/
+├── admin-applications.html       # Static admin review page
+├── admin.html                    # Static admin UI template
+├── announcements.html            # Announcements page
+├── apply.html                    # Club application page
+├── clubs.html                    # Club browsing page
+├── club-details.html             # Club detail page
+├── dashboard.html                # Student dashboard
+├── events.html                   # Events page
+├── index.html                    # Landing/home page
+├── login.html                    # Student login page
+├── register.html                 # Student registration page
+├── status.html                   # Application status page
 ├── css/
-│   ├── style.css              # Main styles with CSS variables
-│   ├── dashboard.css          # Dashboard-specific styles
-│   └── admin.css              # Admin panel styles
-│
+│   ├── admin.css
+│   ├── dashboard.css
+│   └── style.css
 ├── js/
-│   ├── storage.js             # localStorage management
-│   ├── auth.js                # Authentication logic
-│   ├── clubs.js               # Clubs management
-│   ├── application.js         # Membership applications
-│   ├── dashboard.js           # Dashboard utilities
-│   └── app.js                 # Global app functionality
-│
-└── assets/
-    ├── images/                # Club logos and images
-    └── icons/                 # UI icons
+│   ├── app.js
+│   ├── application.js
+│   ├── auth.js
+│   ├── clubs.js
+│   ├── dashboard.js
+│   ├── storage.js
+│   └── ...
+├── e_club_membership_system/
+│   ├── blog/
+│   │   ├── admin.py
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── urls.py
+│   │   └── views.py
+│   ├── e_club_membership_system/
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   ├── wsgi.py
+│   │   └── asgi.py
+├── manage.py
+├── db.sqlite3                    # Local database file
+└── e-Clubvenv/                   # Python virtual environment
 ```
 
-## 🎯 Features
+## Key Features
 
-### User Features
-- **Authentication**: Registration and login with form validation
-- **Club Discovery**: Browse, search, and filter clubs by category
-- **Club Details**: View detailed information, objectives, and events
-- **Membership Application**: Apply for club membership with motivation statement
-- **Application Tracking**: View status of applications (Pending/Approved/Rejected)
-- **Dashboard**: Personal dashboard showing stats and joined clubs
-- **Events**: Browse upcoming club events
-- **Announcements**: View club announcements and updates
+### Student Features
+- Register and login through backend API
+- Browse clubs and search/filter by category
+- View club details, announcements, and events
+- Apply for club membership with a motivation statement
+- Track application status on the status page
+- Access a student dashboard with summary stats
+- Remember login email and theme preference using localStorage
 
-### Admin Features
-- **Dashboard**: System overview and quick statistics
-- **Club Management**: View and manage all clubs
-- **Student Management**: View registered students
-- **Application Review**: Approve/reject membership applications
-- **Event Management**: Manage club events
-- **Announcement Management**: Post and manage announcements
-- **Reports**: Analytics and statistics
+### Backend Features
+- Django REST API endpoints for student auth and data
+- Models for `Student`, `Club`, `Application`, `Event`, and `Announcement`
+- Admin routes available via Django admin (`/admin/`)
+- JWT token endpoints configured in settings (`/api/token/`, `/api/token/refresh/`)
 
-### Technical Features
-- **Responsive Design**: Mobile, tablet, and desktop support
-- **Dark/Light Mode**: Theme toggle for accessibility
-- **Form Validation**: Client-side validation for all forms
-- **localStorage**: Persistent data storage for:
-  - User accounts
-  - Clubs and events
-  - Membership applications
-  - Announcements
-- **CSS Variables**: Modern styling with customizable colors
-- **Animations**: Smooth transitions and hover effects
-- **Notifications**: Toast messages for user feedback
+### Technical Details
+- Frontend: HTML, CSS, JavaScript
+- Backend: Django, Django REST Framework, `django-cors-headers`
+- LocalStorage used for theme, session, and some fallback data
+- Club data is fetched from backend API at `http://127.0.0.1:8000`
 
-## 🚀 Getting Started
+## API Endpoints
+
+- `POST /api/register/` — create student account
+- `POST /api/login/` — login
+- `GET /api/clubs/` — list clubs
+- `POST /api/apply/` — submit application
+- `GET /api/my-applications/?student_id=<id>` — get student applications
+- `GET /api/applications/` — list all applications
+- `POST /api/application/<id>/approve/` — approve application
+- `POST /api/application/<id>/reject/` — reject application
+- `GET /api/events/` — list events
+- `GET /api/announcements/` — list announcements
+- `GET /api/dashboard/` — summary counts
+
+## Required Setup
 
 ### Prerequisites
-- A modern web browser (Chrome, Firefox, Safari, Edge)
-- No server or backend required
+- Python 3
+- Browser (Chrome, Firefox, Edge, Safari)
+- PostgreSQL if using the current Django database settings, or update `DATABASES` in `e_club_membership_system/e_club_membership_system/settings.py`
 
-### Installation
-1. Extract the project files to a folder
-2. Open `index.html` in a web browser
-3. Navigate through the application
+### Run Backend Server
+1. Activate the virtual environment:
+   - PowerShell: `.
+   e-Clubvenv\Scripts\Activate.ps1`
+   - Command Prompt: `.
+   e-Clubvenv\Scripts\activate.bat`
+2. Install requirements if needed:
+   - `pip install django djangorestframework djangorestframework-simplejwt django-cors-headers psycopg2-binary`
+3. Run the Django server:
+   - `python manage.py runserver`
+4. Confirm backend is available at `http://127.0.0.1:8000`
 
-### Demo Account
-1. Go to Register page
-2. Create a new account with any details:
-   - Full Name: Any name
-   - Registration Number: Any ID
-   - Email: Any valid email
-   - Password: Minimum 6 characters
-3. Login with your credentials
-4. Explore the dashboard and apply for clubs
+### Open Frontend
+- Open `index.html` in your browser
+- For full functionality, keep the Django backend running
 
-## 📱 Pages Description
+## Pages
 
-### Public Pages
-- **Home (index.html)**: Featured clubs and system information
-- **Clubs (clubs.html)**: Browse all clubs with search and filter
-- **Club Details (club-details.html)**: View club info, events, and announcements
-- **Events (events.html)**: Browse all upcoming events
-- **Announcements (announcements.html)**: View all announcements
+### Public
+- `index.html` — Home/landing page
+- `clubs.html` — Club listings and search
+- `club-details.html` — Club detail view
+- `events.html` — Events listing
+- `announcements.html` — Announcements listing
 
 ### Authentication
-- **Register (register.html)**: Create new student account
-- **Login (login.html)**: Sign in with email and password
+- `register.html` — Registration page
+- `login.html` — Login page
 
-### Protected Pages (Requires Login)
-- **Dashboard (dashboard.html)**: Personal student dashboard
-- **Apply (apply.html)**: Apply for club membership
-- **Status (status.html)**: Track application status
+### Protected
+- `dashboard.html` — Student dashboard
+- `apply.html` — Apply for club membership
+- `status.html` — View your application status
 
-### Admin Pages
-- **Admin (admin.html)**: Admin dashboard (UI template)
+### Admin
+- `admin.html` / `admin-applications.html` — Frontend admin UI templates
+- `/admin/` — Django backend admin panel
 
-## 🎨 Design Features
+## Data Storage Notes
 
-### Color Scheme
-- **Primary**: #3366cc (Blue)
-- **Secondary**: #ff6b6b (Red)
-- **Success**: #51cf66 (Green)
-- **Warning**: #ffd43b (Yellow)
-- **Danger**: #ff8787 (Red)
+- Backend stores actual student, club, application, event, and announcement data
+- Frontend stores session and preference data in browser localStorage:
+  - `student` — logged-in user session
+  - `rememberedEmail` — saved login email
+  - `theme` — dark/light theme selection
+- `StorageManager` initializes default club, event, and announcement data in localStorage when missing
 
-### Responsive Breakpoints
-- **Desktop**: 1200px+
-- **Tablet**: 768px - 1199px
-- **Mobile**: < 768px
+## How to Use
 
-### Typography
-- Font Family: Segoe UI, Tahoma, Geneva, Verdana
-- Responsive font sizes
-- Clear hierarchy and readability
-
-## 💾 Data Storage
-
-All data is stored in browser's localStorage:
-- `clubs`: Club information and details
-- `students`: Registered student accounts
-- `applications`: Membership applications
-- `events`: Club events
-- `announcements`: Club announcements
-- `currentUser`: Currently logged-in user
-- `theme`: Dark/light mode preference
-
-Data persists across browser sessions (except in private/incognito mode).
-
-## 🔒 Security Notes
-
-**Important**: This is a frontend-only demo application. In production:
-- Implement server-side authentication
-- Use secure password hashing (bcrypt, Argon2)
-- Implement HTTPS
-- Add CSRF protection
-- Use OAuth or JWT tokens
-- Never store sensitive data in localStorage
-- Add role-based access control
-
-## 🎓 Clubs Included
-
-1. **PyCon Club** 🐍
-   - Python programming and development
-   - 245 members
-
-2. **Cybersecurity Club** 🔒
-   - Digital security and ethical hacking
-   - 189 members
-
-3. **GIS Club** 🗺️
-   - Geographic Information Systems
-   - 124 members
-
-4. **Multimedia Club** 🎨
-   - Video, design, and media production
-   - 178 members
-
-## 📊 Sample Events
-
-The system comes pre-loaded with sample events including:
-- Python workshops
-- Cybersecurity seminars
-- GIS practical sessions
-- Video production workshops
-
-## 🔧 Customization
-
-### Add More Clubs
-Edit `js/storage.js` in the `getDefaultClubs()` method:
-```javascript
-{
-  id: 5,
-  name: 'Your Club Name',
-  description: 'Description',
-  logo: '🎯',
-  category: 'Category',
-  // ... other properties
-}
-```
-
-### Change Colors
-Edit CSS variables in `css/style.css`:
-```css
-:root {
-  --primary-color: #yourcolor;
-  --secondary-color: #yourcolor;
-  /* ... */
-}
-```
-
-### Add New Pages
-1. Create HTML file with navigation
-2. Include required JS files
-3. Link from navigation menu
-
-## 📝 Form Validation
-
-### Registration
-- Full Name: 2+ characters
-- Registration Number: 3+ characters
-- Email: Valid email format
-- Password: 6+ characters
-- Passwords must match
-- Must agree to terms
+### Register
+1. Open `register.html`
+2. Enter name, email, password, confirm password, and year of study
+3. Submit to create a backend user
 
 ### Login
-- Valid email required
-- Password required
+1. Open `login.html`
+2. Enter email and password
+3. On success, the student is saved in localStorage and redirected to `dashboard.html`
 
-### Application
-- Club selection required
-- Motivation: 10+ characters
+### Apply
+1. Open `apply.html`
+2. Select a club and enter motivation
+3. Submit to send the application to the backend
 
-## 🌐 Browser Support
+### Track Status
+- Open `status.html` to load applications from the backend
 
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Mobile browsers
+### Dashboard
+- Open `dashboard.html` to view club counts and application summary
 
-## 📄 License
+## Notes and Known Behavior
 
-This project is open source and available for educational purposes.
+- Some frontend pages use fetch requests to `http://127.0.0.1:8000`
+- The Django settings file is currently configured for PostgreSQL
+- Static admin pages are present, but backend data management is best done through Django admin
+- The project is a demonstration and not production-ready
 
-## 🤝 Contributing
+## Suggested Improvements
 
-To enhance this project:
-1. Add more clubs and events
-2. Implement additional features
-3. Improve UI/UX
-4. Add more animations
-5. Create mobile app version
+- Wire the static admin pages to backend API endpoints
+- Add proper token/auth handling for all frontend pages
+- Use a shared backend data source instead of mixed localStorage fallback
+- Add a `requirements.txt` for reproducible installs
+- Improve validation and error handling in frontend forms
 
-## 📞 Support
+## License
 
-For issues or questions:
-- Check the admin dashboard for system stats
-- Review localStorage data in browser DevTools
-- Clear cache if experiencing issues
+This repository is provided for educational purposes.
 
-## 🎉 Features Checklist
-
-- ✅ 11 HTML pages
-- ✅ 3 CSS stylesheets
-- ✅ 6 JavaScript modules
-- ✅ Responsive design
-- ✅ Dark/Light mode
-- ✅ Form validation
-- ✅ localStorage integration
-- ✅ Animations and transitions
-- ✅ Admin dashboard UI
-- ✅ Search and filter
-- ✅ Status tracking
-- ✅ Notifications
-- ✅ Professional UI
-- ✅ Complete documentation
-
-## 🚀 Future Enhancements
-
-- Backend integration (Node.js/Express, Django, etc.)
-- Database implementation (MongoDB, PostgreSQL)
-- Email notifications
-- Calendar integration
-- File uploads
-- Image gallery
-- Forum/Discussion board
-- Payment integration for premium clubs
-- Mobile app (React Native, Flutter)
-- API documentation
-- Advanced analytics
-
----
-
-**Version**: 1.0.0  
-**Created**: 2024  
-**Last Updated**: 2024

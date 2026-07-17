@@ -17,27 +17,8 @@
         🎓 E-Club
       </div>
       <button class="menu-toggle">☰</button>
-      <div class="navbar-menu">
-        <a href="index.html">Home</a>
-        <a href="clubs.html">Clubs</a>
-        <a href="events.html">Events</a>
-        <a href="announcements.html">Announcements</a>
-      </div>
-      <div class="navbar-actions">
-        <div id="authLinks" class="flex-gap-md">
-          <a href="login.html" class="btn btn-outline btn-small">Login</a>
-          <a href="register.html" class="btn btn-primary btn-small">Register</a>
-        </div>
-        <div id="loggedInLinks" class="flex-gap-md">
-          <a href="dashboard.html">Dashboard</a>
-          <span style="color: var(--text-secondary);">|</span>
-          <a href="status.html">Status</a>
-          <span style="color: var(--text-secondary);">|</span>
-          <button onclick="App.logout()" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-weight: 500;">Logout</button>
-        </div>
-        <button class="theme-toggle" id="themeToggle">🌙</button>
-      </div>
-    </div>
+      
+      
   </nav>
 
   <!-- Application Section -->
@@ -86,41 +67,7 @@
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>About</h3>
-          <p>E-Club Membership System helps students discover and join clubs that match their interests and passions.</p>
-        </div>
-        <div class="footer-section">
-          <h3>Quick Links</h3>
-          <a href="clubs.html">Clubs</a>
-          <a href="events.html">Events</a>
-          <a href="announcements.html">Announcements</a>
-          <a href="register.html">Register</a>
-        </div>
-        <div class="footer-section">
-          <h3>Support</h3>
-          <a href="#">Contact Us</a>
-          <a href="#">FAQ</a>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-        </div>
-        <div class="footer-section">
-          <h3>Connect</h3>
-          <a href="#">Facebook</a>
-          <a href="#">Twitter</a>
-          <a href="#">Instagram</a>
-          <a href="#">LinkedIn</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>Copyright @2026 e-Club Membership System. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
+
 
   <script src="js/storage.js"></script>
   <script src="js/auth.js"></script>
@@ -131,25 +78,44 @@
   <script>
     // Load clubs into select
     function loadClubs() {
-      const select = document.getElementById('club');
-      const clubs = ClubsManager.getClubs();
 
-      clubs.forEach(club => {
-        const option = document.createElement('option');
-        option.value = club.id;
-        option.textContent = club.name;
-        select.appendChild(option);
-      });
-    }
+fetch("http://127.0.0.1:8000/api/clubs/")
+.then(res => res.json())
+.then(clubs => {
+
+const select = document.getElementById("club");
+
+clubs.forEach(club => {
+
+const option = document.createElement("option");
+
+option.value = club.id;
+option.textContent = club.name;
+
+select.appendChild(option);
+
+});
+
+});
+
+}
 
     // Load user data
-    function loadUserData() {
-      const user = AuthManager.getCurrentUser();
-      if (user) {
-        document.getElementById('studentName').value = user.fullName;
-        document.getElementById('studentEmail').value = user.email;
-      }
-    }
+   function loadUserData(){
+
+const student = JSON.parse(localStorage.getItem("student"));
+
+if(!student){
+
+window.location.href="login.html";
+return;
+
+}
+
+document.getElementById("studentName").value=student.full_name;
+document.getElementById("studentEmail").value=student.email;
+
+}
 
     // Get club ID from URL
     function getClubIdFromUrl() {
@@ -189,16 +155,57 @@
         return;
       }
 
-      const result = ApplicationManager.apply(clubId, user.id, motivation);
+     const student = JSON.parse(localStorage.getItem("student"));
 
-      if (result.success) {
-        App.showNotification(result.message, 'success');
-        setTimeout(() => {
-          window.location.href = 'status.html';
-        }, 1500);
-      } else {
-        App.showNotification(result.message, 'error');
-      }
+fetch("http://127.0.0.1:8000/api/apply/",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+student_id:student.id,
+club_id:clubId
+
+})
+
+})
+
+.then(async response=>{
+
+const data=await response.json();
+
+if(!response.ok){
+
+throw data;
+
+}
+
+return data;
+
+})
+
+.then(data=>{
+
+App.showNotification(data.message,"success");
+
+setTimeout(()=>{
+
+window.location.href="status.html";
+
+},1500);
+
+})
+
+.catch(error=>{
+
+App.showNotification(error.message,"error");
+
+});
+
     });
 
     // Initialize
